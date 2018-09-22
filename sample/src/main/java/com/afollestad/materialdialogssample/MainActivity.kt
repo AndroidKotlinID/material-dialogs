@@ -1,12 +1,17 @@
+/*
+ * Licensed under Apache-2.0
+ *
+ * Designed and developed by Aidan Follestad (@afollestad)
+ */
 @file:Suppress("DEPRECATION")
 
 package com.afollestad.materialdialogssample
 
 import android.Manifest.permission.READ_EXTERNAL_STORAGE
+import android.Manifest.permission.WRITE_EXTERNAL_STORAGE
 import android.content.SharedPreferences
 import android.graphics.Color
 import android.os.Bundle
-import android.support.v7.app.AppCompatActivity
 import android.text.InputType
 import android.text.method.PasswordTransformationMethod
 import android.view.Menu
@@ -14,6 +19,7 @@ import android.view.MenuItem
 import android.webkit.WebView
 import android.widget.CheckBox
 import android.widget.EditText
+import androidx.appcompat.app.AppCompatActivity
 import com.afollestad.materialdialogs.MaterialDialog
 import com.afollestad.materialdialogs.callbacks.onCancel
 import com.afollestad.materialdialogs.callbacks.onDismiss
@@ -84,8 +90,12 @@ class MainActivity : AppCompatActivity() {
 
   companion object {
     const val KEY_PREFS = "prefs"
-    const val KEY_DARK_THEME = "dark_theme"
+    const val KEY_THEME = "KEY_THEME"
     const val KEY_DEBUG_MODE = "debug_mode"
+
+    const val LIGHT = "light"
+    const val DARK = "dark"
+    const val CUSTOM = "custom"
   }
 
   private var debugMode = false
@@ -95,7 +105,11 @@ class MainActivity : AppCompatActivity() {
   override fun onCreate(savedInstanceState: Bundle?) {
     prefs = getSharedPreferences(KEY_PREFS, MODE_PRIVATE)
     setTheme(
-        if (prefs.boolean(KEY_DARK_THEME)) R.style.AppTheme_Dark else R.style.AppTheme
+        when (prefs.getString(KEY_THEME, LIGHT)) {
+          DARK -> R.style.AppTheme_Dark
+          CUSTOM -> R.style.AppTheme_Custom
+          else -> R.style.AppTheme
+        }
     )
     debugMode = prefs.boolean(KEY_DEBUG_MODE, false)
 
@@ -163,8 +177,6 @@ class MainActivity : AppCompatActivity() {
         debugMode(debugMode)
       }
     }
-
-
 
     basic_checkbox_titled_buttons.setOnClickListener {
       MaterialDialog(this).show {
@@ -592,10 +604,11 @@ class MainActivity : AppCompatActivity() {
     }
 
     colorChooser_customColors.setOnClickListener {
-      val topLevel = intArrayOf(Color.RED, Color.YELLOW, Color.BLUE)
+      val topLevel = intArrayOf(Color.TRANSPARENT, Color.RED, Color.YELLOW, Color.BLUE)
       val subLevel = arrayOf(
+          intArrayOf(Color.WHITE, Color.TRANSPARENT, Color.BLACK),
           intArrayOf(Color.LTGRAY, Color.GRAY, Color.DKGRAY),
-          intArrayOf(Color.GREEN, Color.BLACK),
+          intArrayOf(Color.GREEN),
           intArrayOf(Color.MAGENTA, Color.CYAN)
       )
 
@@ -663,9 +676,7 @@ class MainActivity : AppCompatActivity() {
 
   private fun showWebViewDialog() {
     val dialog = MaterialDialog(this).show {
-      title(R.string.changelog)
-      customView(R.layout.custom_view_webview)
-      positiveButton(android.R.string.ok)
+      customView(R.layout.custom_view_webview, noVerticalPadding = true)
       debugMode(debugMode)
     }
 
@@ -712,14 +723,14 @@ class MainActivity : AppCompatActivity() {
   }
 
   private fun showFileChooserButtons() {
-    permission.request(arrayOf(READ_EXTERNAL_STORAGE)) { result ->
+    permission.request(arrayOf(WRITE_EXTERNAL_STORAGE)) { result ->
       if (!result.allGranted()) {
         toast("Storage permission is needed for file choosers")
         return@request
       }
 
       MaterialDialog(this).show {
-        fileChooser { _, file ->
+        fileChooser(allowFolderCreation = true) { _, file ->
           toast("Selected file: ${file.absolutePath}")
         }
         negativeButton(android.R.string.cancel)
@@ -745,31 +756,15 @@ class MainActivity : AppCompatActivity() {
     }
   }
 
-  private fun showFolderChooser() {
-    permission.request(arrayOf(READ_EXTERNAL_STORAGE)) { result ->
-      if (!result.allGranted()) {
-        toast("Storage permission is needed for file choosers")
-        return@request
-      }
-
-      MaterialDialog(this).show {
-        folderChooser { _, folder ->
-          toast("Selected folder: ${folder.absolutePath}")
-        }
-        debugMode(debugMode)
-      }
-    }
-  }
-
   private fun showFolderChooserButtons() {
-    permission.request(arrayOf(READ_EXTERNAL_STORAGE)) { result ->
+    permission.request(arrayOf(WRITE_EXTERNAL_STORAGE)) { result ->
       if (!result.allGranted()) {
         toast("Storage permission is needed for file choosers")
         return@request
       }
 
       MaterialDialog(this).show {
-        folderChooser { _, folder ->
+        folderChooser(allowFolderCreation = true) { _, folder ->
           toast("Selected folder: ${folder.absolutePath}")
         }
         negativeButton(android.R.string.cancel)
@@ -797,8 +792,19 @@ class MainActivity : AppCompatActivity() {
 
   override fun onCreateOptionsMenu(menu: Menu): Boolean {
     menuInflater.inflate(R.menu.main, menu)
-    menu.findItem(R.id.dark_theme)
-        .isChecked = prefs.boolean(KEY_DARK_THEME)
+    val theme = prefs.getString(KEY_THEME, LIGHT)
+    if (theme == LIGHT) {
+      menu.findItem(R.id.light_theme)
+          .isChecked = true
+    }
+    if (theme == DARK) {
+      menu.findItem(R.id.dark_theme)
+          .isChecked = true
+    }
+    if (theme == CUSTOM) {
+      menu.findItem(R.id.custom_theme)
+          .isChecked = true
+    }
     menu.findItem(R.id.debug_mode)
         .isChecked = debugMode
     return super.onCreateOptionsMenu(menu)
@@ -806,10 +812,23 @@ class MainActivity : AppCompatActivity() {
 
   override fun onOptionsItemSelected(item: MenuItem): Boolean {
     when (item.itemId) {
-      R.id.dark_theme -> {
-        val newIsDark = !prefs.boolean(KEY_DARK_THEME)
+      R.id.light_theme -> {
         prefs.apply {
-          putBoolean(KEY_DARK_THEME, newIsDark)
+          putString(KEY_THEME, LIGHT)
+        }
+        recreate()
+        return true
+      }
+      R.id.dark_theme -> {
+        prefs.apply {
+          putString(KEY_THEME, DARK)
+        }
+        recreate()
+        return true
+      }
+      R.id.custom_theme -> {
+        prefs.apply {
+          putString(KEY_THEME, CUSTOM)
         }
         recreate()
         return true

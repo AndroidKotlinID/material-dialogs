@@ -1,16 +1,15 @@
 /*
  * Licensed under Apache-2.0
  *
- * Designed an developed by Aidan Follestad (afollestad)
+ * Designed and developed by Aidan Follestad (@afollestad)
  */
-
 package com.afollestad.materialdialogs.files.utilext
 
 import android.Manifest.permission
 import android.content.Context
 import android.content.pm.PackageManager
 import android.os.Environment.getExternalStorageDirectory
-import android.support.v4.content.ContextCompat
+import androidx.core.content.ContextCompat
 import com.afollestad.materialdialogs.MaterialDialog
 import java.io.File
 
@@ -26,7 +25,7 @@ internal fun File.betterParent(): File? {
     // Emulated external storage's parent is empty so jump over it
     return getExternalStorageDirectory().parentFile.parentFile
   }
-  if (parentFile.isRoot()) {
+  if (parentFile?.isRoot() == true) {
     val rootContent = parentFile.list() ?: emptyArray()
     if (rootContent.isEmpty()) {
       // If device isn't rooted, don't allow root dir access so we don't get stuck
@@ -58,4 +57,8 @@ internal fun Context.hasPermission(permission: String): Boolean {
 
 internal fun MaterialDialog.hasReadStoragePermission(): Boolean {
   return windowContext.hasPermission(permission.READ_EXTERNAL_STORAGE)
+}
+
+internal fun MaterialDialog.hasWriteStoragePermission(): Boolean {
+  return windowContext.hasPermission(permission.WRITE_EXTERNAL_STORAGE)
 }

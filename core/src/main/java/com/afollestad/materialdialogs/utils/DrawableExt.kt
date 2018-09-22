@@ -1,16 +1,15 @@
 /*
  * Licensed under Apache-2.0
  *
- * Designed an developed by Aidan Follestad (afollestad)
+ * Designed and developed by Aidan Follestad (@afollestad)
  */
-
-package com.afollestad.materialdialogs.utilext
+package com.afollestad.materialdialogs.utils
 
 import android.content.Context
 import android.graphics.drawable.Drawable
-import android.support.annotation.AttrRes
-import android.support.annotation.DrawableRes
-import android.support.v4.content.ContextCompat
+import androidx.annotation.AttrRes
+import androidx.annotation.DrawableRes
+import androidx.core.content.ContextCompat
 
 internal fun getDrawable(
   context: Context,

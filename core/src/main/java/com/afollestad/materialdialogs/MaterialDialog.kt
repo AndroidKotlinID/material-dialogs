@@ -1,48 +1,53 @@
 /*
  * Licensed under Apache-2.0
  *
- * Designed an developed by Aidan Follestad (afollestad)
+ * Designed and developed by Aidan Follestad (@afollestad)
  */
-
 @file:Suppress("unused")
 
 package com.afollestad.materialdialogs
 
 import android.app.Dialog
 import android.content.Context
+import android.graphics.Typeface
 import android.graphics.drawable.Drawable
-import android.support.annotation.CheckResult
-import android.support.annotation.DrawableRes
-import android.support.annotation.RestrictTo
-import android.support.annotation.RestrictTo.Scope
-import android.support.annotation.StringRes
 import android.view.View
 import android.widget.LinearLayout
 import android.widget.TextView
+import androidx.annotation.CheckResult
+import androidx.annotation.DrawableRes
+import androidx.annotation.StringRes
 import com.afollestad.materialdialogs.Theme.Companion.inferTheme
 import com.afollestad.materialdialogs.WhichButton.NEGATIVE
 import com.afollestad.materialdialogs.WhichButton.NEUTRAL
 import com.afollestad.materialdialogs.WhichButton.POSITIVE
 import com.afollestad.materialdialogs.actions.getActionButton
 import com.afollestad.materialdialogs.callbacks.invokeAll
-import com.afollestad.materialdialogs.internal.button.DialogActionButtonLayout.Companion.INDEX_NEGATIVE
-import com.afollestad.materialdialogs.internal.button.DialogActionButtonLayout.Companion.INDEX_NEUTRAL
-import com.afollestad.materialdialogs.internal.button.DialogActionButtonLayout.Companion.INDEX_POSITIVE
 import com.afollestad.materialdialogs.internal.list.DialogAdapter
 import com.afollestad.materialdialogs.internal.list.DialogRecyclerView
 import com.afollestad.materialdialogs.internal.main.DialogLayout
 import com.afollestad.materialdialogs.internal.main.DialogScrollView
 import com.afollestad.materialdialogs.list.getListAdapter
-import com.afollestad.materialdialogs.utilext.isVisible
-import com.afollestad.materialdialogs.utilext.assertOneSet
-import com.afollestad.materialdialogs.utilext.getString
-import com.afollestad.materialdialogs.utilext.hideKeyboard
-import com.afollestad.materialdialogs.utilext.inflate
-import com.afollestad.materialdialogs.utilext.preShow
-import com.afollestad.materialdialogs.utilext.setDefaults
-import com.afollestad.materialdialogs.utilext.setIcon
-import com.afollestad.materialdialogs.utilext.setText
-import com.afollestad.materialdialogs.utilext.setWindowConstraints
+import com.afollestad.materialdialogs.utils.addContentMessageView
+import com.afollestad.materialdialogs.utils.addContentScrollView
+import com.afollestad.materialdialogs.utils.hideKeyboard
+import com.afollestad.materialdialogs.utils.inflate
+import com.afollestad.materialdialogs.utils.isVisible
+import com.afollestad.materialdialogs.utils.populateIcon
+import com.afollestad.materialdialogs.utils.populateText
+import com.afollestad.materialdialogs.utils.preShow
+import com.afollestad.materialdialogs.utils.setDefaults
+import com.afollestad.materialdialogs.utils.setWindowConstraints
+
+internal fun assertOneSet(
+  method: String,
+  b: Any?,
+  a: Int?
+) {
+  if ((a == null || a == 0) && b == null) {
+    throw IllegalArgumentException("$method: You must specify a resource ID or literal value")
+  }
+}
 
 typealias DialogCallback = (MaterialDialog) -> Unit
 
@@ -64,8 +69,15 @@ class MaterialDialog(
   var autoDismissEnabled: Boolean = true
     internal set
 
+  var titleFont: Typeface? = null
+    internal set
+  var bodyFont: Typeface? = null
+    internal set
+  var buttonFont: Typeface? = null
+    internal set
+
   internal val view: DialogLayout = inflate(R.layout.md_dialog_base)
-  private var textViewMessage: TextView? = null
+  internal var textViewMessage: TextView? = null
   internal var contentScrollView: DialogScrollView? = null
   internal var contentScrollViewFrame: LinearLayout? = null
   internal var contentRecyclerView: DialogRecyclerView? = null
@@ -93,13 +105,12 @@ class MaterialDialog(
    * @param res The drawable resource to display as the drawable.
    * @param drawable The drawable to display as the drawable.
    */
-  @CheckResult
-  fun icon(
+  @CheckResult fun icon(
     @DrawableRes res: Int? = null,
     drawable: Drawable? = null
   ): MaterialDialog {
-    assertOneSet(res, drawable)
-    setIcon(
+    assertOneSet("icon", drawable, res)
+    populateIcon(
         view.titleLayout.iconView,
         iconRes = res,
         icon = drawable
@@ -113,16 +124,17 @@ class MaterialDialog(
    * @param res The string resource to display as the title.
    * @param text The literal string to display as the title.
    */
-  @CheckResult
-  fun title(
+  @CheckResult fun title(
     @StringRes res: Int? = null,
     text: String? = null
   ): MaterialDialog {
-    assertOneSet(res, text)
-    setText(
+    assertOneSet("title", text, res)
+    populateText(
         view.titleLayout.titleView,
         textRes = res,
-        text = text
+        text = text,
+        typeface = this.titleFont,
+        textColor = R.attr.md_color_title
     )
     return this
   }
@@ -133,8 +145,7 @@ class MaterialDialog(
    * @param res The string resource to display as the message.
    * @param text The literal string to display as the message.
    */
-  @CheckResult
-  fun message(
+  @CheckResult fun message(
     @StringRes res: Int? = null,
     text: CharSequence? = null
   ): MaterialDialog {
@@ -153,8 +164,7 @@ class MaterialDialog(
    * @param text The literal string to display on the button.
    * @param click A listener to invoke when the button is pressed.
    */
-  @CheckResult
-  fun positiveButton(
+  @CheckResult fun positiveButton(
     @StringRes res: Int? = null,
     text: CharSequence? = null,
     click: DialogCallback? = null
@@ -170,11 +180,12 @@ class MaterialDialog(
       return this
     }
 
-    setText(
+    populateText(
         btn,
         textRes = res,
         text = text,
-        fallback = android.R.string.ok
+        fallback = android.R.string.ok,
+        typeface = this.buttonFont
     )
     return this
   }
@@ -187,8 +198,7 @@ class MaterialDialog(
    * @param text The literal string to display on the button.
    * @param click A listener to invoke when the button is pressed.
    */
-  @CheckResult
-  fun negativeButton(
+  @CheckResult fun negativeButton(
     @StringRes res: Int? = null,
     text: CharSequence? = null,
     click: DialogCallback? = null
@@ -204,11 +214,12 @@ class MaterialDialog(
       return this
     }
 
-    setText(
+    populateText(
         btn,
         textRes = res,
         text = text,
-        fallback = android.R.string.cancel
+        fallback = android.R.string.cancel,
+        typeface = this.buttonFont
     )
     return this
   }
@@ -234,10 +245,11 @@ class MaterialDialog(
       return this
     }
 
-    setText(
+    populateText(
         btn,
         textRes = res,
-        text = text
+        text = text,
+        typeface = this.buttonFont
     )
     return this
   }
@@ -246,15 +258,13 @@ class MaterialDialog(
    * Turns off auto dismiss. Action button and list item clicks won't dismiss the dialog on their
    * own. You have to handle dismissing the dialog manually with the [dismiss] method.
    */
-  @CheckResult
-  fun noAutoDismiss(): MaterialDialog {
+  @CheckResult fun noAutoDismiss(): MaterialDialog {
     this.autoDismissEnabled = false
     return this
   }
 
   /** Turns debug mode on or off. Draws spec guides over dialog views. */
-  @CheckResult
-  fun debugMode(debugMode: Boolean = true): MaterialDialog {
+  @CheckResult fun debugMode(debugMode: Boolean = true): MaterialDialog {
     this.view.debugMode = debugMode
     return this
   }
@@ -272,19 +282,22 @@ class MaterialDialog(
     return this
   }
 
+  /** A fluent version of [setCancelable]. */
+  fun cancelable(cancelable: Boolean): MaterialDialog {
+    this.setCancelable(cancelable)
+    return this
+  }
+
+  /** A fluent version of [setCanceledOnTouchOutside]. */
+  fun cancelOnTouchOutside(cancelable: Boolean): MaterialDialog {
+    this.setCanceledOnTouchOutside(cancelable)
+    return this
+  }
+
   override fun dismiss() {
     hideKeyboard()
     super.dismiss()
   }
-
-  @RestrictTo(Scope.LIBRARY_GROUP)
-  fun invalidateDividers(
-    scrolledDown: Boolean,
-    atBottom: Boolean
-  ) = view.invalidateDividers(scrolledDown, atBottom)
-
-  @RestrictTo(Scope.LIBRARY_GROUP)
-  fun isContentScrollViewAdded() = this.contentScrollView != null
 
   internal fun onActionButtonClicked(which: WhichButton) {
     when (which) {
@@ -299,26 +312,5 @@ class MaterialDialog(
     if (autoDismissEnabled) {
       dismiss()
     }
-  }
-
-  internal fun addContentScrollView() {
-    if (this.contentScrollView == null) {
-      this.contentScrollView = inflate(R.layout.md_dialog_stub_scrollview, this.view)
-      this.contentScrollView!!.rootView = this.view
-      this.contentScrollViewFrame = this.contentScrollView!!.getChildAt(0) as LinearLayout
-      this.view.addView(this.contentScrollView, 1)
-    }
-  }
-
-  private fun addContentMessageView(@StringRes res: Int?, text: CharSequence?) {
-    if (this.textViewMessage == null) {
-      this.textViewMessage = inflate(
-          R.layout.md_dialog_stub_message,
-          this.contentScrollViewFrame!!
-      )
-      this.contentScrollViewFrame!!.addView(this.textViewMessage)
-    }
-    assertOneSet(res, text)
-    this.textViewMessage!!.text = text ?: getString(res)
   }
 }

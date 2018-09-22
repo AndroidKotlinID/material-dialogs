@@ -1,16 +1,14 @@
 /*
  * Licensed under Apache-2.0
  *
- * Designed an developed by Aidan Follestad (afollestad)
+ * Designed and developed by Aidan Follestad (@afollestad)
  */
-
-
 package com.afollestad.materialdialogs.internal.main
 
 import android.content.Context
 import android.util.AttributeSet
 import android.widget.ScrollView
-import com.afollestad.materialdialogs.utilext.waitForLayout
+import com.afollestad.materialdialogs.utils.waitForLayout
 
 /**
  * A [ScrollView] which reports whether or not it's scrollable based on whether the content

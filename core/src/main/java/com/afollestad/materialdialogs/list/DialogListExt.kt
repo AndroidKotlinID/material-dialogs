@@ -1,33 +1,30 @@
 /*
  * Licensed under Apache-2.0
  *
- * Designed an developed by Aidan Follestad (afollestad)
+ * Designed and developed by Aidan Follestad (@afollestad)
  */
-
 @file:Suppress("unused")
 
 package com.afollestad.materialdialogs.list
 
-import android.support.annotation.ArrayRes
-import android.support.annotation.CheckResult
-import android.support.v7.widget.LinearLayoutManager
-import android.support.v7.widget.RecyclerView
+import androidx.annotation.ArrayRes
+import androidx.annotation.CheckResult
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.afollestad.materialdialogs.MaterialDialog
 import com.afollestad.materialdialogs.R
 import com.afollestad.materialdialogs.R.attr
+import com.afollestad.materialdialogs.assertOneSet
 import com.afollestad.materialdialogs.internal.list.PlainListDialogAdapter
-import com.afollestad.materialdialogs.utilext.getDrawable
-import com.afollestad.materialdialogs.utilext.assertOneSet
-import com.afollestad.materialdialogs.utilext.getStringArray
-import com.afollestad.materialdialogs.utilext.inflate
+import com.afollestad.materialdialogs.utils.getDrawable
+import com.afollestad.materialdialogs.utils.getStringArray
+import com.afollestad.materialdialogs.utils.inflate
 
-@CheckResult
-fun MaterialDialog.getRecyclerView(): RecyclerView? {
+@CheckResult fun MaterialDialog.getRecyclerView(): RecyclerView? {
   return this.contentRecyclerView
 }
 
-@CheckResult
-fun MaterialDialog.getListAdapter(): RecyclerView.Adapter<*>? {
+@CheckResult fun MaterialDialog.getListAdapter(): RecyclerView.Adapter<*>? {
   return this.contentRecyclerView?.adapter
 }
 
@@ -36,8 +33,7 @@ fun MaterialDialog.getListAdapter(): RecyclerView.Adapter<*>? {
  *
  * Cannot be used in combination with message, input, and some other types of dialogs.
  */
-@CheckResult
-fun MaterialDialog.customListAdapter(
+@CheckResult fun MaterialDialog.customListAdapter(
   adapter: RecyclerView.Adapter<*>
 ): MaterialDialog {
   addContentRecyclerView()
@@ -54,16 +50,15 @@ fun MaterialDialog.customListAdapter(
  *    is selected and the positive action button is pressed. Defaults to true if the dialog has buttons.
  * @param selection A listener invoked when an item in the list is selected.
  */
-@CheckResult
-fun MaterialDialog.listItems(
+@CheckResult fun MaterialDialog.listItems(
   @ArrayRes res: Int? = null,
-  items: Array<String>? = null,
+  items: List<String>? = null,
   disabledIndices: IntArray? = null,
   waitForPositiveButton: Boolean = true,
   selection: ItemListener = null
 ): MaterialDialog {
-  assertOneSet(res, items)
-  val array = items ?: getStringArray(res)
+  assertOneSet("listItems", items, res)
+  val array = items ?: getStringArray(res)?.toList()
   val adapter = getListAdapter()
 
   if (adapter is PlainListDialogAdapter) {
@@ -106,7 +101,6 @@ private fun MaterialDialog.addContentRecyclerView() {
       R.layout.md_dialog_stub_recyclerview, this.view
   )
   this.contentRecyclerView!!.attach(this)
-  this.contentRecyclerView!!.layoutManager =
-      LinearLayoutManager(windowContext)
+  this.contentRecyclerView!!.layoutManager = LinearLayoutManager(windowContext)
   this.view.addView(this.contentRecyclerView, 1)
 }

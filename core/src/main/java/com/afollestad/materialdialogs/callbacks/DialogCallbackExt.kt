@@ -1,10 +1,15 @@
+/*
+ * Licensed under Apache-2.0
+ *
+ * Designed and developed by Aidan Follestad (@afollestad)
+ */
 package com.afollestad.materialdialogs.callbacks
 
 import com.afollestad.materialdialogs.DialogCallback
 import com.afollestad.materialdialogs.MaterialDialog
 
 /**
- * Adds a listener that's invoked right before the dialog is [show]'n. If this is called
+ * Adds a listener that's invoked right before the dialog is [MaterialDialog.show]'n. If this is called
  * multiple times, it appends additional callbacks, rather than overwriting.
  */
 fun MaterialDialog.onPreShow(callback: DialogCallback): MaterialDialog {
@@ -13,7 +18,7 @@ fun MaterialDialog.onPreShow(callback: DialogCallback): MaterialDialog {
 }
 
 /**
- * Adds a listener that's invoked when the dialog is [show]'n. If this is called
+ * Adds a listener that's invoked when the dialog is [MaterialDialog.show]'n. If this is called
  * multiple times, it appends additional callbacks, rather than overwriting.
  *
  * If the dialog is already showing, the callback be will be invoked immediately.
@@ -29,7 +34,7 @@ fun MaterialDialog.onShow(callback: DialogCallback): MaterialDialog {
 }
 
 /**
- * Adds a listener that's invoked when the dialog is [dismiss]'d. If this is called
+ * Adds a listener that's invoked when the dialog is [MaterialDialog.dismiss]'d. If this is called
  * multiple times, it appends additional callbacks, rather than overwriting.
  */
 fun MaterialDialog.onDismiss(callback: DialogCallback): MaterialDialog {
@@ -39,7 +44,7 @@ fun MaterialDialog.onDismiss(callback: DialogCallback): MaterialDialog {
 }
 
 /**
- * Adds a listener that's invoked when the dialog is [cancel]'d. If this is called
+ * Adds a listener that's invoked when the dialog is [MaterialDialog.cancel]'d. If this is called
  * multiple times, it appends additional callbacks, rather than overwriting.
  */
 fun MaterialDialog.onCancel(callback: DialogCallback): MaterialDialog {

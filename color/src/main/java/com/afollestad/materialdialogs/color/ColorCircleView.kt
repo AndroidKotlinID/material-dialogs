@@ -1,9 +1,8 @@
 /*
  * Licensed under Apache-2.0
  *
- * Designed an developed by Aidan Follestad (afollestad)
+ * Designed and developed by Aidan Follestad (@afollestad)
  */
-
 package com.afollestad.materialdialogs.color
 
 import android.content.Context
@@ -12,9 +11,9 @@ import android.graphics.Color
 import android.graphics.Paint
 import android.graphics.Paint.Style.FILL
 import android.graphics.Paint.Style.STROKE
-import android.support.annotation.ColorInt
 import android.util.AttributeSet
 import android.view.View
+import androidx.annotation.ColorInt
 import com.afollestad.materialdialogs.color.utilext.dimenPx
 
 /** @author Aidan Follestad (afollestad) */
@@ -39,15 +38,13 @@ internal class ColorCircleView(
     fillPaint.color = Color.DKGRAY
   }
 
-  @ColorInt
-  var color: Int = Color.BLACK
+  @ColorInt var color: Int = Color.BLACK
     set(value) {
       field = value
       fillPaint.color = value
       invalidate()
     }
-  @ColorInt
-  var border: Int = Color.DKGRAY
+  @ColorInt var border: Int = Color.DKGRAY
     set(value) {
       field = value
       strokePaint.color = value

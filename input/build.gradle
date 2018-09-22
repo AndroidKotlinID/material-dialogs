@@ -3,7 +3,7 @@ apply plugin: 'kotlin-android'
 apply from: '../dependencies.gradle'
 apply plugin: "com.github.ben-manes.versions"
 
-ext.shard = 'color'
+ext.shard = 'input'
 apply from: '../bintrayconfig.gradle'
 
 android {
@@ -23,10 +23,14 @@ android {
         'src/main/res-public'
     ]
   }
+
+  compileOptions {
+    kotlinOptions.freeCompilerArgs += ['-module-name', "com.afollestad.material-dialogs.input"]
+  }
 }
 
 dependencies {
-  implementation 'com.android.support:design:' + versions.supportLib
+  implementation 'com.google.android.material:material:' + versions.androidx
   implementation 'org.jetbrains.kotlin:kotlin-stdlib-jdk7:' + versions.kotlin
   implementation project(':core')
 }

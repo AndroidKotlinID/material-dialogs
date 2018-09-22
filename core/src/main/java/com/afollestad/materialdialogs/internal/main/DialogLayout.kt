@@ -1,10 +1,8 @@
 /*
  * Licensed under Apache-2.0
  *
- * Designed an developed by Aidan Follestad (afollestad)
+ * Designed and developed by Aidan Follestad (@afollestad)
  */
-
-
 package com.afollestad.materialdialogs.internal.main
 
 import android.content.Context
@@ -13,19 +11,20 @@ import android.graphics.Color
 import android.graphics.Paint
 import android.graphics.Paint.Style.FILL
 import android.graphics.Paint.Style.STROKE
-import android.support.annotation.ColorInt
 import android.util.AttributeSet
-import android.util.Log
 import android.view.View
 import android.view.View.MeasureSpec.AT_MOST
 import android.view.View.MeasureSpec.EXACTLY
 import android.view.View.MeasureSpec.UNSPECIFIED
+import android.view.View.MeasureSpec.getSize
+import android.view.View.MeasureSpec.makeMeasureSpec
 import android.widget.FrameLayout
+import androidx.annotation.ColorInt
 import com.afollestad.materialdialogs.MaterialDialog
 import com.afollestad.materialdialogs.R
 import com.afollestad.materialdialogs.internal.button.DialogActionButtonLayout
 import com.afollestad.materialdialogs.internal.title.DialogTitleLayout
-import com.afollestad.materialdialogs.utilext.dimenPx
+import com.afollestad.materialdialogs.utils.dimenPx
 
 val DEBUG_COLOR_PINK = Color.parseColor("#EAA3CF")
 val DEBUG_COLOR_DARK_PINK = Color.parseColor("#E066B1")
@@ -78,20 +77,20 @@ internal class DialogLayout(
     widthMeasureSpec: Int,
     heightMeasureSpec: Int
   ) {
-    val specWidth = MeasureSpec.getSize(widthMeasureSpec)
-    var specHeight = MeasureSpec.getSize(heightMeasureSpec)
+    val specWidth = getSize(widthMeasureSpec)
+    var specHeight = getSize(heightMeasureSpec)
     if (specHeight > maxHeight) {
       specHeight = maxHeight
     }
 
     titleLayout.measure(
-        MeasureSpec.makeMeasureSpec(specWidth, EXACTLY),
-        MeasureSpec.makeMeasureSpec(0, UNSPECIFIED)
+        makeMeasureSpec(specWidth, EXACTLY),
+        makeMeasureSpec(0, UNSPECIFIED)
     )
     if (buttonsLayout.shouldBeVisible()) {
       buttonsLayout.measure(
-          MeasureSpec.makeMeasureSpec(specWidth, EXACTLY),
-          MeasureSpec.makeMeasureSpec(0, UNSPECIFIED)
+          makeMeasureSpec(specWidth, EXACTLY),
+          makeMeasureSpec(0, UNSPECIFIED)
       )
     }
 
@@ -99,22 +98,14 @@ internal class DialogLayout(
       titleLayout.measuredHeight + buttonsLayout.measuredHeight
     val remainingHeight = specHeight - titleAndButtonsHeight
     contentView.measure(
-        MeasureSpec.makeMeasureSpec(specWidth, EXACTLY),
-        MeasureSpec.makeMeasureSpec(remainingHeight, AT_MOST)
+        makeMeasureSpec(specWidth, EXACTLY),
+        makeMeasureSpec(remainingHeight, AT_MOST)
     )
 
     val totalHeight = titleLayout.measuredHeight +
         contentView.measuredHeight +
         buttonsLayout.measuredHeight
     setMeasuredDimension(specWidth, totalHeight)
-
-    Log.d(
-        "MaterialDialogs",
-        "DialogLayout.onMeasure($specWidth, $totalHeight)\n" +
-            "\ttitleHeight = ${titleLayout.measuredHeight}, " +
-            "\tcontentHeight = ${contentView.measuredHeight}, " +
-            "\tbuttonsHeight = ${buttonsLayout.measuredHeight}"
-    )
   }
 
   override fun onLayout(
@@ -187,7 +178,8 @@ internal class DialogLayout(
   }
 
   fun debugPaint(
-    @ColorInt color: Int, stroke: Boolean = false
+    @ColorInt color: Int,
+    stroke: Boolean = false
   ): Paint {
     if (debugPaint == null) {
       debugPaint = Paint()

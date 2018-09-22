@@ -1,39 +1,32 @@
 /*
  * Licensed under Apache-2.0
  *
- * Designed an developed by Aidan Follestad (afollestad)
+ * Designed and developed by Aidan Follestad (@afollestad)
  */
-
 @file:Suppress("unused")
 
 package com.afollestad.materialdialogs.input
 
 import android.annotation.SuppressLint
-import android.support.annotation.CheckResult
-import android.support.annotation.StringRes
-import android.support.design.widget.TextInputLayout
 import android.text.InputType
-import android.widget.EditText
+import androidx.annotation.CheckResult
+import androidx.annotation.StringRes
 import com.afollestad.materialdialogs.MaterialDialog
 import com.afollestad.materialdialogs.WhichButton.POSITIVE
 import com.afollestad.materialdialogs.actions.hasActionButtons
 import com.afollestad.materialdialogs.actions.setActionButtonEnabled
 import com.afollestad.materialdialogs.callbacks.onPreShow
+import com.afollestad.materialdialogs.callbacks.onShow
 import com.afollestad.materialdialogs.customview.customView
 import com.afollestad.materialdialogs.customview.getCustomView
 import com.afollestad.materialdialogs.input.utilext.textChanged
+import com.google.android.material.textfield.TextInputLayout
 
 typealias InputCallback = ((MaterialDialog, CharSequence) -> Unit)?
 
-@CheckResult
-fun MaterialDialog.getInputLayout(): TextInputLayout? {
-  return this.getCustomView() as? TextInputLayout
-}
+@CheckResult fun MaterialDialog.getInputLayout() = getCustomView() as? TextInputLayout
 
-@CheckResult
-fun MaterialDialog.getInputField(): EditText? {
-  return getInputLayout()?.editText
-}
+@CheckResult fun MaterialDialog.getInputField() = getInputLayout()?.editText
 
 /**
  * Shows an input field as the content of the dialog. Can be used with a message and checkbox
@@ -76,9 +69,17 @@ fun MaterialDialog.input(
 
   val resources = windowContext.resources
   val editText = getInputField()!!
-  editText.setText(
-      prefill ?: if (prefillRes != null) resources.getString(prefillRes) else null
+
+  val prefillText = prefill ?: if (prefillRes != null) resources.getString(prefillRes) else null
+  if (prefillText != null) {
+    editText.setText(prefillText)
+    onShow { editText.setSelection(prefillText.length) }
+  }
+  setActionButtonEnabled(
+      POSITIVE,
+      !waitForPositiveButton || prefillText?.isNotEmpty() == true
   )
+
   editText.hint = hint ?: if (hintRes != null) resources.getString(hintRes) else null
   editText.inputType = inputType
 

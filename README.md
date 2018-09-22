@@ -29,6 +29,12 @@ versions will no longer receive support.**
 10. [Checkbox Prompts](#checkbox-prompts)
 11. [Custom Views](#custom-views)
 12. [Miscellaneous](#miscellaneous)
+14. [Theming](#theming)
+    1. [Light and Dark](#light-and-dark)
+    2. [Background Color](#background-color)
+    3. [Corner Radius](#corner-radius)
+    4. [Text Color][#text-color]
+    5. [Fonts](#fonts)
 
 # Table of Contents - Input
 
@@ -47,10 +53,12 @@ versions will no longer receive support.**
     1. [Basics](#basics-2)
     2. [Filter](#filter)
     3. [Empty Text](#empty-text)
+    4. [Folder Creation](#folder-creation)
 3. [Folder Choosers](#folder-choosers)
     1. [Basics](#basics-3)
     2. [Filter](#filter-2)
     3. [Empty Text](#empty-text-1)
+    4. [Folder Creation](#folder-creation-1)
 
 # Table of Contents - Color
 
@@ -73,8 +81,14 @@ core and normal-use functionality.
 ```gradle
 dependencies {
 	
-    implementation 'com.afollestad.material-dialogs:core:2.0.0-alpha02'
+    implementation 'com.afollestad.material-dialogs:core:2.0.0-alpha12'
 }
+```
+
+If Gradle is unable to resolve, add this to your repositories:
+
+```gradle
+maven { url "https://dl.bintray.com/drummer-aidan/maven/" }
 ```
 
 ## Changes in Version 2
@@ -84,7 +98,7 @@ changed and a lot of things will be broken if you upgrade from the older version
 to note:
 
 1. **This library will be more opinionated. Not every feature request will be implemented.**
-2. Minimum API level is 17 (Android Jellybean MR1).
+2. Minimum API level is 16 (Android Jellybean).
 3. There is no longer a separate `Builder` class, it's all-in-one.
 4. The whole library was completely re-written in Kotlin. All the layouts and views were remade 
 as well. **This library is now designed specifically to work with Kotlin - it technically will 
@@ -240,6 +254,18 @@ val dialog: MaterialDialog = // ...
 dialog.dismiss()
 ```
 
+---
+
+You can prevent a dialog from being canceled, meaning it has to be explictly dismissed with an 
+action button or a call to the method above.
+
+```kotlin
+MaterialDialog(this).show {
+  cancelable(false)  // calls setCancelable on the underlying dialog
+  cancelOnTouchOutside(false)  // calls setCanceledOnTouchOutside on the underlying dialog
+}
+```
+
 ## Lists
 
 ### Plain
@@ -258,7 +284,7 @@ MaterialDialog(this)
 You can pass a literal string array too:
 
 ```kotlin
-val myItems = arrayOf("Hello", "World")
+val myItems = listOf("Hello", "World")
 
 MaterialDialog(this)
   ...
@@ -296,7 +322,7 @@ MaterialDialog(this)
 You can pass a literal string array too:
 
 ```kotlin
-val myItems = arrayOf("Hello", "World")
+val myItems = listOf("Hello", "World")
 
 MaterialDialog(this)
   ...
@@ -353,6 +379,22 @@ MaterialDialog(this)
   .show()
 ```
 
+---
+
+There are methods you can use in a built dialog to modify checked states:
+
+```kotlin
+val dialog: MaterialDialog = // ...
+
+dialog.checkItem(index)
+
+dialog.uncheckItem(index)
+
+dialog.toggleItemChecked(index)
+
+val checked: Boolean = dialog.isItemChecked(index)
+```
+
 ### Multiple Choice
 
 You can show multiple choice (checkbox) lists using the `listItemsMultiChoice` extension on `MaterialDialog`:
@@ -371,7 +413,7 @@ MaterialDialog(this)
 You can pass a literal string array too:
 
 ```kotlin
-val myItems = arrayOf("Hello", "World")
+val myItems = listOf("Hello", "World")
 
 MaterialDialog(this)
   ...
@@ -428,6 +470,29 @@ MaterialDialog(this)
   ...
   .listItemsMultiChoice(R.array.my_items, disabledIndices = indices)
   .show()
+```
+
+---
+
+There are methods you can use in a built dialog to modify checked states:
+
+```kotlin
+val dialog: MaterialDialog = // ...
+val indices: IntArray = // ...
+
+dialog.checkItems(indices)
+
+dialog.uncheckItems(indices)
+
+dialog.toggleItemsChecked(indices)
+
+dialog.checkAllItems()
+
+dialog.uncheckAllItems()
+
+dialog.toggleAllItemsChecked()
+
+val checked: Boolean = dialog.isItemChecked(index)
 ```
 
 ### Custom Adapters 
@@ -567,6 +632,76 @@ MaterialDialog(this)
   .show()
 ```
 
+## Theming
+
+Google's newer mindset with Material Theming (vs the 2014 mindset) is flexible. If you take their 
+["Crane example"](https://material.io/design/components/dialogs.html#theming), you see that they 
+change fonts, corner rounding, etc. 
+
+### Light and Dark
+
+Light and dark theming is automatic based on your app's theme (basically whether `android:textColorPrimary` 
+is more light or more dark):
+
+<img src="https://raw.githubusercontent.com/afollestad/material-dialogs/master/art/lightanddarkthemes.jpg" width="400px" />
+
+### Background Color
+
+Material Dialogs uses the value of the `colorBackgroundFloating` attribute in your Activity theme 
+for the background color of dialogs. You can also use the `md_background_color` attribute in your 
+theme, which will take precedence.
+
+### Corner Radius
+
+Corner radius is the rounding of dialog corners:
+
+<img src="https://raw.githubusercontent.com/afollestad/material-dialogs/master/art/cornerradius.png" width="200px" />
+
+it can be changed with an attribute in your app theme. It defaults to 2dp:
+
+```xml
+<style name="AppTheme.Custom" parent="Theme.AppCompat">
+
+  <item name="md_corner_radius">16dp</item>
+    
+</style>
+```
+
+### Text Color
+
+By default, `android:textColorPrimary` and `android:textColorSecondary` attributes from your Activity
+theme are used for the title and content colors of dialogs. If you wish to override that, there 
+are two attributes provided:
+
+```xml
+<style name="AppTheme.Custom" parent="Theme.AppCompat">
+
+  <item name="md_color_title">@color/your_color</item>
+  <item name="md_color_content">@color/your_color</item>
+    
+</style>
+```
+
+### Fonts
+
+This library supports using custom fonts, powered by the Support libraries `ResourcesCompat` class. 
+With raw font files or XML font files in your `/res/font` folder, you can use them in Material Dialogs 
+using attributes in your app's theme.
+
+```xml
+<style name="AppTheme.Custom" parent="Theme.AppCompat">
+
+  <item name="md_font_title">@font/your_font</item>
+  <item name="md_font_body">@font/your_font</item>
+  <item name="md_font_button">@font/your_font</item>
+    
+</style>
+```
+
+See the "Custom Theme" example in the sample project (open the overflow menu for the theme switcher).
+
+<img src="https://raw.githubusercontent.com/afollestad/material-dialogs/master/art/customtheme.png" width="200px" />
+
 ---
 
 # Input
@@ -580,8 +715,14 @@ The `input` module contains extensions to the core module, such as a text input 
 ```gradle
 dependencies {
 	
-    implementation 'com.afollestad.material-dialogs:input:2.0.0-alpha02'
+    implementation 'com.afollestad.material-dialogs:input:2.0.0-alpha12'
 }
+```
+
+If Gradle is unable to resolve, add this to your repositories:
+
+```gradle
+maven { url "https://dl.bintray.com/drummer-aidan/maven/" }
 ```
 
 ## Text Input
@@ -731,8 +872,14 @@ The `files` module contains extensions to the core module, such as a file and fo
 ```gradle
 dependencies {
 	
-    implementation 'com.afollestad.material-dialogs:files:2.0.0-alpha02'
+    implementation 'com.afollestad.material-dialogs:files:2.0.0-alpha12'
 }
+```
+
+If Gradle is unable to resolve, add this to your repositories:
+
+```gradle
+maven { url "https://dl.bintray.com/drummer-aidan/maven/" }
 ```
 
 ## File Choosers
@@ -801,6 +948,25 @@ MaterialDialog(this)
   .show()
 ```
 
+### Folder Creation
+
+<img src="https://raw.githubusercontent.com/afollestad/material-dialogs/master/art/file_folder_creation.png" width="200px" />
+
+You can allow your users to create folders. 
+
+```kotlin
+MaterialDialog(this)
+  .fileChooser(
+      allowFolderCreation = true,
+      folderCreationLabel = R.string.new_folder // optional as well
+  ) { dialog, file -> 
+      // File selected
+  }
+  .show()
+```
+
+This "New Folder" option is only show in directories which are writable.
+
 ## Folder Choosers
 
 **Note:** Folder choosers require your app to have permission to `READ_EXTERNAL_STORAGE`, otherwise 
@@ -840,13 +1006,34 @@ MaterialDialog(this)
 
 Empty text is shown when a folder has no contents. You can configure the empty text label:
 
+<img src="https://raw.githubusercontent.com/afollestad/material-dialogs/master/art/file_emptytext.png" width="200px" />
+
 ```kotlin
 MaterialDialog(this)
-  .fileChooser(emptyTextRes = R.string.custom_label) { dialog, file -> 
+  .folderChooser(emptyTextRes = R.string.custom_label) { dialog, file -> 
       // File selected
   }
   .show()
 ```
+
+### Folder Creation
+
+<img src="https://raw.githubusercontent.com/afollestad/material-dialogs/master/art/file_folder_creation.png" width="200px" />
+
+You can allow your users to create folders. 
+
+```kotlin
+MaterialDialog(this)
+  .folderChooser(
+      allowFolderCreation = true,
+      folderCreationLabel = R.string.new_folder // optional as well
+  ) { dialog, file -> 
+      // File selected
+  }
+  .show()
+```
+
+This "New Folder" option is only show in directories which are writable.
 
 ---
 
@@ -861,8 +1048,14 @@ The `color` module contains extensions to the core module, such as a color choos
 ```gradle
 dependencies {
 	
-    implementation 'com.afollestad.material-dialogs:color:2.0.0-alpha02'
+    implementation 'com.afollestad.material-dialogs:color:2.0.0-alpha12'
 }
+```
+
+If Gradle is unable to resolve, add this to your repositories:
+
+```gradle
+maven { url "https://dl.bintray.com/drummer-aidan/maven/" }
 ```
 
 ## Color Choosers
@@ -908,7 +1101,7 @@ level array must match the size of the sub-colors array.
 
 ```kotlin
 val colors = intArrayOf(Color.RED, Color.GREEN, Color.BLUE) // size = 3
-val subColors = arrayOf( // size = 3
+val subColors = listOf( // size = 3
   intArrayOf(Color.LIGHT_RED, Color.RED, Color.DARK_RED, Color.WHITE),
   intArrayOf(Color.LIGHT_GREEN, Color.GREEN, Color.DARK_GREEN, Color.GRAY),
   intArrayOf(Color.LIGHT_BLUE, Color.BLUE, Color.DARK_BLUE, Color.BLACK)

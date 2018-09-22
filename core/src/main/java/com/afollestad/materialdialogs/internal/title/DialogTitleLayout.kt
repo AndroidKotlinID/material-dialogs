@@ -1,9 +1,8 @@
 /*
  * Licensed under Apache-2.0
  *
- * Designed an developed by Aidan Follestad (afollestad)
+ * Designed and developed by Aidan Follestad (@afollestad)
  */
-
 package com.afollestad.materialdialogs.internal.title
 
 import android.content.Context
@@ -12,15 +11,18 @@ import android.util.AttributeSet
 import android.view.View.MeasureSpec.AT_MOST
 import android.view.View.MeasureSpec.EXACTLY
 import android.view.View.MeasureSpec.UNSPECIFIED
+import android.view.View.MeasureSpec.getSize
+import android.view.View.MeasureSpec.makeMeasureSpec
 import android.widget.ImageView
 import android.widget.TextView
 import com.afollestad.materialdialogs.R
 import com.afollestad.materialdialogs.internal.main.BaseSubLayout
 import com.afollestad.materialdialogs.internal.main.DEBUG_COLOR_DARK_PINK
 import com.afollestad.materialdialogs.internal.main.DEBUG_COLOR_PINK
-import com.afollestad.materialdialogs.utilext.dimenPx
-import com.afollestad.materialdialogs.utilext.isNotVisible
-import com.afollestad.materialdialogs.utilext.isVisible
+import com.afollestad.materialdialogs.utils.dimenPx
+import com.afollestad.materialdialogs.utils.isNotVisible
+import com.afollestad.materialdialogs.utils.isRtl
+import com.afollestad.materialdialogs.utils.isVisible
 import java.lang.Math.max
 
 /**
@@ -61,21 +63,21 @@ internal class DialogTitleLayout(
       return
     }
 
-    val parentWidth = MeasureSpec.getSize(widthMeasureSpec)
+    val parentWidth = getSize(widthMeasureSpec)
     var titleMaxWidth =
       parentWidth - (frameMarginHorizontal * 2)
 
     if (iconView.isVisible()) {
       iconView.measure(
-          MeasureSpec.makeMeasureSpec(iconSize, EXACTLY),
-          MeasureSpec.makeMeasureSpec(iconSize, EXACTLY)
+          makeMeasureSpec(iconSize, EXACTLY),
+          makeMeasureSpec(iconSize, EXACTLY)
       )
-      titleMaxWidth -= iconView.measuredWidth
+      titleMaxWidth -= (iconView.measuredWidth + iconMargin)
     }
 
     titleView.measure(
-        MeasureSpec.makeMeasureSpec(titleMaxWidth, AT_MOST),
-        MeasureSpec.makeMeasureSpec(0, UNSPECIFIED)
+        makeMeasureSpec(titleMaxWidth, AT_MOST),
+        makeMeasureSpec(0, UNSPECIFIED)
     )
 
     val iconViewHeight =
@@ -100,21 +102,49 @@ internal class DialogTitleLayout(
   ) {
     if (shouldNotBeVisible()) return
 
-    var titleLeft = frameMarginHorizontal
-    val titleBottom = measuredHeight - titleMarginBottom
-    val titleTop = titleBottom - titleView.measuredHeight
-    val titleRight = titleLeft + titleView.measuredWidth
+    var titleLeft: Int
+    val titleBottom: Int
+    val titleTop: Int
+    var titleRight: Int
+
+    if (isRtl()) {
+      titleRight = measuredWidth - frameMarginHorizontal
+      titleBottom = measuredHeight - titleMarginBottom
+      titleTop = titleBottom - titleView.measuredHeight
+      titleLeft = titleRight - titleView.measuredWidth
+    } else {
+      titleLeft = frameMarginHorizontal
+      titleBottom = measuredHeight - titleMarginBottom
+      titleTop = titleBottom - titleView.measuredHeight
+      titleRight = titleLeft + titleView.measuredWidth
+    }
 
     if (iconView.isVisible()) {
       val titleHalfHeight = (titleBottom - titleTop) / 2
       val titleMidPoint = titleBottom - titleHalfHeight
       val iconHalfHeight = iconView.measuredHeight / 2
-      val iconLeft = titleLeft
-      val iconTop = titleMidPoint - iconHalfHeight
-      val iconRight = iconLeft + iconView.measuredWidth
-      val iconBottom = iconTop + iconView.measuredHeight
+
+      val iconLeft: Int
+      val iconTop: Int
+      val iconRight: Int
+      val iconBottom: Int
+
+      if (isRtl()) {
+        iconRight = titleRight
+        iconTop = titleMidPoint - iconHalfHeight
+        iconLeft = iconRight - iconView.measuredWidth
+        iconBottom = iconTop + iconView.measuredHeight
+        titleRight = iconLeft - iconMargin
+        titleLeft = titleRight - titleView.measuredWidth
+      } else {
+        iconLeft = titleLeft
+        iconTop = titleMidPoint - iconHalfHeight
+        iconRight = iconLeft + iconView.measuredWidth
+        iconBottom = iconTop + iconView.measuredHeight
+        titleLeft = iconRight + iconMargin
+        titleRight = titleLeft + titleView.measuredWidth
+      }
       iconView.layout(iconLeft, iconTop, iconRight, iconBottom)
-      titleLeft = iconRight + iconMargin
     }
 
     titleView.layout(titleLeft, titleTop, titleRight, titleBottom)

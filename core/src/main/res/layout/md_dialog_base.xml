@@ -22,11 +22,10 @@
         tools:ignore="ContentDescription"
         />
 
-    <TextView
+    <com.afollestad.materialdialogs.internal.rtl.RtlTextView
         android:id="@+id/md_text_title"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_toEndOf="@+id/md_icon_title"
         android:visibility="gone"
         tools:text="Use Google's location service?"
         style="@style/MD_Dialog_Title_Text"
@@ -42,8 +41,9 @@
 
     <android.support.v7.widget.AppCompatCheckBox
         android:id="@+id/md_checkbox_prompt"
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:gravity="start|center_vertical"
         android:visibility="gone"
         />
 

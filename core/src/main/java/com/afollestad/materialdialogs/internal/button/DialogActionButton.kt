@@ -1,23 +1,23 @@
 /*
  * Licensed under Apache-2.0
  *
- * Designed an developed by Aidan Follestad (afollestad)
+ * Designed and developed by Aidan Follestad (@afollestad)
  */
-
 package com.afollestad.materialdialogs.internal.button
 
 import android.content.Context
-import android.support.v7.widget.AppCompatButton
 import android.util.AttributeSet
-import android.view.View
+import android.view.Gravity.CENTER
+import androidx.appcompat.widget.AppCompatButton
 import com.afollestad.materialdialogs.R
 import com.afollestad.materialdialogs.R.attr
 import com.afollestad.materialdialogs.Theme.Companion.inferTheme
 import com.afollestad.materialdialogs.Theme.LIGHT
-import com.afollestad.materialdialogs.utilext.dimenPx
-import com.afollestad.materialdialogs.utilext.getColor
-import com.afollestad.materialdialogs.utilext.getDrawable
-import com.afollestad.materialdialogs.utilext.updatePadding
+import com.afollestad.materialdialogs.utils.dimenPx
+import com.afollestad.materialdialogs.utils.getColor
+import com.afollestad.materialdialogs.utils.getDrawable
+import com.afollestad.materialdialogs.utils.setGravityEndCompat
+import com.afollestad.materialdialogs.utils.updatePadding
 
 /**
  * Represents an action button in a dialog, positive, negative, or neutral. Handles switching
@@ -64,7 +64,8 @@ internal class DialogActionButton(
     updatePadding(left = sidePadding, right = sidePadding)
 
     // Text alignment
-    textAlignment = if (stacked) View.TEXT_ALIGNMENT_VIEW_END else View.TEXT_ALIGNMENT_CENTER
+    if (stacked) setGravityEndCompat()
+    else gravity = CENTER
 
     // Invalidate in case enabled state was changed before this method executed
     isEnabled = isEnabled

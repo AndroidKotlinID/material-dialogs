@@ -1,32 +1,35 @@
 /*
  * Licensed under Apache-2.0
  *
- * Designed an developed by Aidan Follestad (afollestad)
+ * Designed and developed by Aidan Follestad (@afollestad)
  */
-
-package com.afollestad.materialdialogs.utilext
+package com.afollestad.materialdialogs.utils
 
 import android.content.Context
-import android.support.annotation.DimenRes
-import android.support.annotation.LayoutRes
-import android.support.annotation.RestrictTo
-import android.support.annotation.RestrictTo.Scope
+import android.os.Build.VERSION.SDK_INT
+import android.os.Build.VERSION_CODES.JELLY_BEAN_MR1
+import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
-import android.view.View.INVISIBLE
-import android.view.View.VISIBLE
 import android.view.ViewGroup
 import android.view.ViewGroup.MarginLayoutParams
 import android.view.ViewTreeObserver
 import android.widget.Button
+import android.widget.TextView
+import androidx.annotation.LayoutRes
+import com.afollestad.materialdialogs.MaterialDialog
 
 @Suppress("UNCHECKED_CAST")
 internal fun <R : View> ViewGroup.inflate(
   ctxt: Context = context,
   @LayoutRes res: Int
-): R {
-  return LayoutInflater.from(ctxt).inflate(res, this, false) as R
-}
+) = LayoutInflater.from(ctxt).inflate(res, this, false) as R
+
+@Suppress("UNCHECKED_CAST")
+internal fun <T> MaterialDialog.inflate(
+  @LayoutRes res: Int,
+  root: ViewGroup? = null
+) = LayoutInflater.from(windowContext).inflate(res, root, false) as T
 
 internal fun <T : View> T.updatePadding(
   left: Int = this.paddingLeft,
@@ -45,10 +48,7 @@ internal fun <T : View> T.updatePadding(
   this.setPadding(left, top, right, bottom)
 }
 
-internal fun <T : View> T.topMargin(): Int {
-  val layoutParams = this.layoutParams as MarginLayoutParams
-  return layoutParams.topMargin
-}
+internal fun <T : View> T.topMargin() = (this.layoutParams as MarginLayoutParams).topMargin
 
 internal fun <T : View> T.updateMargin(
   left: Int = -1,
@@ -82,10 +82,6 @@ internal inline fun <T : View> T.waitForLayout(crossinline f: T.() -> Unit) =
     })
   }
 
-internal fun <T : View> T.dimenPx(@DimenRes res: Int): Int {
-  return context.resources.getDimensionPixelSize(res)
-}
-
 internal fun <T : View> T.isVisible(): Boolean {
   return if (this is Button) {
     this.visibility == View.VISIBLE && this.text.trim().isNotBlank()
@@ -98,7 +94,23 @@ internal fun <T : View> T.isNotVisible(): Boolean {
   return !isVisible()
 }
 
-@RestrictTo(Scope.LIBRARY_GROUP)
-fun <T : View> T.setVisible(visible: Boolean) {
-  visibility = if (visible) VISIBLE else INVISIBLE
+internal fun <T : View> T.isRtl(): Boolean {
+  if (SDK_INT < JELLY_BEAN_MR1) return false
+  return resources.configuration.layoutDirection == View.LAYOUT_DIRECTION_RTL
+}
+
+internal fun TextView.setGravityStartCompat() {
+  if (SDK_INT >= JELLY_BEAN_MR1) {
+    this.textAlignment = View.TEXT_ALIGNMENT_VIEW_START
+  } else {
+    this.gravity = Gravity.START
+  }
+}
+
+internal fun TextView.setGravityEndCompat() {
+  if (SDK_INT >= JELLY_BEAN_MR1) {
+    this.textAlignment = View.TEXT_ALIGNMENT_VIEW_END
+  } else {
+    this.gravity = Gravity.END
+  }
 }

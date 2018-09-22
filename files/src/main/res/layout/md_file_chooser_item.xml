@@ -16,18 +16,23 @@
       android:id="@+id/icon"
       android:layout_width="wrap_content"
       android:layout_height="wrap_content"
+      android:layout_alignParentLeft="true"
+      android:layout_alignParentStart="true"
       android:layout_centerVertical="true"
       android:layout_marginEnd="@dimen/file_chooser_item_icon_margin_end"
+      android:layout_marginRight="@dimen/file_chooser_item_icon_margin_end"
       android:src="@drawable/icon_folder_dark"
       tools:ignore="ContentDescription"
       />
 
   <TextView
       android:id="@+id/name"
-      android:layout_width="match_parent"
+      android:layout_width="wrap_content"
       android:layout_height="wrap_content"
       android:layout_centerVertical="true"
       android:layout_toEndOf="@+id/icon"
+      android:layout_toRightOf="@+id/icon"
+      android:gravity="start|center_vertical"
       android:textColor="?android:textColorPrimary"
       tools:text="External Storage"
       />

@@ -1,17 +1,16 @@
 /*
  * Licensed under Apache-2.0
  *
- * Designed an developed by Aidan Follestad (afollestad)
+ * Designed and developed by Aidan Follestad (@afollestad)
  */
-
 package com.afollestad.materialdialogs.internal.list
 
-import android.support.v7.widget.AppCompatCheckBox
-import android.support.v7.widget.RecyclerView
 import android.view.View
 import android.view.View.OnClickListener
 import android.view.ViewGroup
 import android.widget.TextView
+import androidx.appcompat.widget.AppCompatCheckBox
+import androidx.recyclerview.widget.RecyclerView
 import com.afollestad.materialdialogs.MaterialDialog
 import com.afollestad.materialdialogs.R
 import com.afollestad.materialdialogs.WhichButton.POSITIVE
@@ -19,8 +18,11 @@ import com.afollestad.materialdialogs.actions.hasActionButtons
 import com.afollestad.materialdialogs.actions.setActionButtonEnabled
 import com.afollestad.materialdialogs.list.MultiChoiceListener
 import com.afollestad.materialdialogs.list.getItemSelector
-import com.afollestad.materialdialogs.utilext.inflate
-import com.afollestad.materialdialogs.utilext.pullIndices
+import com.afollestad.materialdialogs.utils.appendAll
+import com.afollestad.materialdialogs.utils.inflate
+import com.afollestad.materialdialogs.utils.maybeSetTextColor
+import com.afollestad.materialdialogs.utils.pullIndices
+import com.afollestad.materialdialogs.utils.removeAll
 
 /** @author Aidan Follestad (afollestad) */
 internal class MultiChoiceViewHolder(
@@ -52,7 +54,7 @@ internal class MultiChoiceViewHolder(
  */
 internal class MultiChoiceDialogAdapter(
   private var dialog: MaterialDialog,
-  internal var items: Array<String>,
+  internal var items: List<String>,
   disabledItems: IntArray?,
   initialSelection: IntArray,
   private val waitForActionButton: Boolean,
@@ -76,7 +78,7 @@ internal class MultiChoiceDialogAdapter(
         }
       }
     }
-  var disabledIndices: IntArray = disabledItems ?: IntArray(0)
+  private var disabledIndices: IntArray = disabledItems ?: IntArray(0)
 
   internal fun itemClicked(index: Int) {
     val newSelection = this.currentSelection.toMutableList()
@@ -106,10 +108,12 @@ internal class MultiChoiceDialogAdapter(
     viewType: Int
   ): MultiChoiceViewHolder {
     val listItemView: View = parent.inflate(dialog.windowContext, R.layout.md_listitem_multichoice)
-    return MultiChoiceViewHolder(
+    val viewHolder = MultiChoiceViewHolder(
         itemView = listItemView,
         adapter = this
     )
+    viewHolder.titleView.maybeSetTextColor(dialog.windowContext, R.attr.md_color_content)
+    return viewHolder
   }
 
   override fun getItemCount() = items.size
@@ -123,6 +127,10 @@ internal class MultiChoiceDialogAdapter(
     holder.controlView.isChecked = currentSelection.contains(position)
     holder.titleView.text = items[position]
     holder.itemView.background = dialog.getItemSelector()
+
+    if (dialog.bodyFont != null) {
+      holder.titleView.typeface = dialog.bodyFont
+    }
   }
 
   override fun positiveButtonClicked() {
@@ -133,7 +141,7 @@ internal class MultiChoiceDialogAdapter(
   }
 
   override fun replaceItems(
-    items: Array<String>,
+    items: List<String>,
     listener: MultiChoiceListener
   ) {
     this.items = items
@@ -145,4 +153,50 @@ internal class MultiChoiceDialogAdapter(
     this.disabledIndices = indices
     notifyDataSetChanged()
   }
+
+  override fun checkItems(indices: IntArray) {
+    val existingSelection = this.currentSelection
+    val indicesToAdd = indices.filter { !existingSelection.contains(it) }
+    this.currentSelection = this.currentSelection.appendAll(indicesToAdd)
+  }
+
+  override fun uncheckItems(indices: IntArray) {
+    val existingSelection = this.currentSelection
+    val indicesToAdd = indices.filter { existingSelection.contains(it) }
+    this.currentSelection = this.currentSelection.removeAll(indicesToAdd)
+  }
+
+  override fun toggleItems(indices: IntArray) {
+    val newSelection = this.currentSelection.toMutableList()
+    for (target in indices) {
+      if (this.disabledIndices.contains(target)) continue
+      if (newSelection.contains(target)) {
+        newSelection.remove(target)
+      } else {
+        newSelection.add(target)
+      }
+    }
+    this.currentSelection = newSelection.toIntArray()
+  }
+
+  override fun checkAllItems() {
+    val existingSelection = this.currentSelection
+    val wholeRange = IntArray(itemCount) { it }
+    val indicesToAdd = wholeRange.filter { !existingSelection.contains(it) }
+    this.currentSelection = this.currentSelection.appendAll(indicesToAdd)
+  }
+
+  override fun uncheckAllItems() {
+    this.currentSelection = intArrayOf()
+  }
+
+  override fun toggleAllChecked() {
+    if (this.currentSelection.isEmpty()) {
+      checkAllItems()
+    } else {
+      uncheckAllItems()
+    }
+  }
+
+  override fun isItemChecked(index: Int) = this.currentSelection.contains(index)
 }

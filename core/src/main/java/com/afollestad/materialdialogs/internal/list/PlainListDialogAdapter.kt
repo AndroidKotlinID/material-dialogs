@@ -1,22 +1,22 @@
 /*
  * Licensed under Apache-2.0
  *
- * Designed an developed by Aidan Follestad (afollestad)
+ * Designed and developed by Aidan Follestad (@afollestad)
  */
-
 package com.afollestad.materialdialogs.internal.list
 
-import android.support.v7.widget.RecyclerView
 import android.view.View
 import android.view.View.OnClickListener
 import android.view.ViewGroup
 import android.widget.TextView
+import androidx.recyclerview.widget.RecyclerView
 import com.afollestad.materialdialogs.MaterialDialog
 import com.afollestad.materialdialogs.R
 import com.afollestad.materialdialogs.actions.hasActionButtons
 import com.afollestad.materialdialogs.list.ItemListener
 import com.afollestad.materialdialogs.list.getItemSelector
-import com.afollestad.materialdialogs.utilext.inflate
+import com.afollestad.materialdialogs.utils.inflate
+import com.afollestad.materialdialogs.utils.maybeSetTextColor
 
 private const val KEY_ACTIVATED_INDEX = "activated_index"
 
@@ -41,7 +41,7 @@ internal class PlainListViewHolder(
  */
 internal class PlainListDialogAdapter(
   private var dialog: MaterialDialog,
-  internal var items: Array<String>,
+  internal var items: List<String>,
   disabledItems: IntArray?,
   private var waitForActionButton: Boolean,
   internal var selection: ItemListener
@@ -73,10 +73,12 @@ internal class PlainListDialogAdapter(
     viewType: Int
   ): PlainListViewHolder {
     val listItemView: View = parent.inflate(dialog.windowContext, R.layout.md_listitem)
-    return PlainListViewHolder(
+    val viewHolder = PlainListViewHolder(
         itemView = listItemView,
         adapter = this
     )
+    viewHolder.titleView.maybeSetTextColor(dialog.windowContext, R.attr.md_color_content)
+    return viewHolder
   }
 
   override fun getItemCount() = items.size
@@ -93,6 +95,10 @@ internal class PlainListDialogAdapter(
 
     val activatedIndex = dialog.config[KEY_ACTIVATED_INDEX] as? Int
     holder.itemView.isActivated = activatedIndex != null && activatedIndex == position
+
+    if (dialog.bodyFont != null) {
+      holder.titleView.typeface = dialog.bodyFont
+    }
   }
 
   override fun positiveButtonClicked() {
@@ -104,7 +110,7 @@ internal class PlainListDialogAdapter(
   }
 
   override fun replaceItems(
-    items: Array<String>,
+    items: List<String>,
     listener: ItemListener
   ) {
     this.items = items
@@ -116,4 +122,18 @@ internal class PlainListDialogAdapter(
     this.disabledIndices = indices
     notifyDataSetChanged()
   }
+
+  override fun checkItems(indices: IntArray) = Unit
+
+  override fun uncheckItems(indices: IntArray) = Unit
+
+  override fun toggleItems(indices: IntArray) = Unit
+
+  override fun checkAllItems() = Unit
+
+  override fun uncheckAllItems() = Unit
+
+  override fun toggleAllChecked() = Unit
+
+  override fun isItemChecked(index: Int) = false
 }

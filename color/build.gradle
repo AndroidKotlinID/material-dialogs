@@ -23,11 +23,16 @@ android {
         'src/main/res-public'
     ]
   }
+
+  compileOptions {
+    kotlinOptions.freeCompilerArgs += ['-module-name', "com.afollestad.material-dialogs.color"]
+  }
 }
 
 dependencies {
-  implementation 'com.android.support:recyclerview-v7:' + versions.supportLib
+  implementation 'androidx.recyclerview:recyclerview:' + versions.androidx
   implementation 'org.jetbrains.kotlin:kotlin-stdlib-jdk7:' + versions.kotlin
+
   implementation project(':core')
 }
 

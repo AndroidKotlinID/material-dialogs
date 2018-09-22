@@ -1,21 +1,20 @@
 /*
  * Licensed under Apache-2.0
  *
- * Designed an developed by Aidan Follestad (afollestad)
+ * Designed and developed by Aidan Follestad (@afollestad)
  */
-
 package com.afollestad.materialdialogs.internal.main
 
 import android.content.Context
 import android.graphics.Paint
 import android.graphics.Paint.Style.STROKE
-import android.support.annotation.ColorInt
 import android.util.AttributeSet
 import android.view.ViewGroup
+import androidx.annotation.ColorInt
 import com.afollestad.materialdialogs.R
 import com.afollestad.materialdialogs.R.attr
-import com.afollestad.materialdialogs.utilext.dimenPx
-import com.afollestad.materialdialogs.utilext.getColor
+import com.afollestad.materialdialogs.utils.dimenPx
+import com.afollestad.materialdialogs.utils.getColor
 
 internal abstract class BaseSubLayout(
   context: Context,
@@ -49,7 +48,8 @@ internal abstract class BaseSubLayout(
   }
 
   protected fun debugPaint(
-    @ColorInt color: Int, stroke: Boolean = false
+    @ColorInt color: Int,
+    stroke: Boolean = false
   ): Paint = dialogParent().debugPaint(color, stroke)
 
   private fun getDividerColor(): Int {
