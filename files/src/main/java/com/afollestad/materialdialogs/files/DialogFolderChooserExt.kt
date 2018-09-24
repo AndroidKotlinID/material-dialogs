@@ -49,6 +49,7 @@ fun MaterialDialog.folderChooser(
   } else if (!hasReadStoragePermission()) {
     throw IllegalStateException("You must have the READ_EXTERNAL_STORAGE permission first.")
   }
+
   customView(R.layout.md_file_chooser_base)
   setActionButtonEnabled(POSITIVE, false)
 

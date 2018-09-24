@@ -19,7 +19,6 @@ import com.afollestad.materialdialogs.customview.getCustomView
 import com.afollestad.materialdialogs.files.utilext.hasReadStoragePermission
 import com.afollestad.materialdialogs.files.utilext.hasWriteStoragePermission
 import com.afollestad.materialdialogs.files.utilext.maybeSetTextColor
-import com.afollestad.materialdialogs.files.utilext.updatePadding
 import com.afollestad.materialdialogs.input.input
 import com.afollestad.materialdialogs.internal.list.DialogRecyclerView
 import java.io.File
@@ -54,6 +53,7 @@ fun MaterialDialog.fileChooser(
   } else if (!hasReadStoragePermission()) {
     throw IllegalStateException("You must have the READ_EXTERNAL_STORAGE permission first.")
   }
+
   customView(R.layout.md_file_chooser_base)
   setActionButtonEnabled(POSITIVE, false)
 
@@ -86,15 +86,6 @@ fun MaterialDialog.fileChooser(
         selection.invoke(this, selectedFile)
       }
     }
-  }
-
-  if (allowFolderCreation) {
-    // Increase empty text top padding to make room for New Folder option
-    emptyText.updatePadding(
-        top = context.resources.getDimensionPixelSize(
-            R.dimen.empty_text_padding_top_larger
-        )
-    )
   }
 
   return this
