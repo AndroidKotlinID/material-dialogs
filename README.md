@@ -81,7 +81,7 @@ core and normal-use functionality.
 ```gradle
 dependencies {
 	
-    implementation 'com.afollestad.material-dialogs:core:2.0.0-beta2'
+    implementation 'com.afollestad.material-dialogs:core:2.0.0-beta4'
 }
 ```
 
@@ -715,7 +715,7 @@ The `input` module contains extensions to the core module, such as a text input 
 ```gradle
 dependencies {
 	
-    implementation 'com.afollestad.material-dialogs:input:2.0.0-beta2'
+    implementation 'com.afollestad.material-dialogs:input:2.0.0-beta4'
 }
 ```
 
@@ -872,7 +872,7 @@ The `files` module contains extensions to the core module, such as a file and fo
 ```gradle
 dependencies {
 	
-    implementation 'com.afollestad.material-dialogs:files:2.0.0-beta2'
+    implementation 'com.afollestad.material-dialogs:files:2.0.0-beta4'
 }
 ```
 
@@ -1048,7 +1048,7 @@ The `color` module contains extensions to the core module, such as a color choos
 ```gradle
 dependencies {
 	
-    implementation 'com.afollestad.material-dialogs:color:2.0.0-beta2'
+    implementation 'com.afollestad.material-dialogs:color:2.0.0-beta4'
 }
 ```
 
@@ -1116,3 +1116,24 @@ MaterialDialog(this)
   .positiveButton(R.string.select)
   .show()
 ```
+
+### ARGB Selection
+
+<img src="https://raw.githubusercontent.com/afollestad/material-dialogs/master/art/custom_argb.png" width="200px" />
+
+```kotlin
+MaterialDialog(this)
+  .title(R.string.colors)
+  .colorChooser(
+      colors = colors, 
+      subColors = subColors,
+      allowCustomArgb = true,
+      showAlphaSelector = true
+  ) { dialog, color ->
+      // Use color integer
+  }
+  .positiveButton(R.string.select)
+  .show()
+```
+
+Omitting `showAlphaSelector` will hide the alpha (transparency) selector.
