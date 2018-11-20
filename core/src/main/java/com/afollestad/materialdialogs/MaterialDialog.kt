@@ -28,8 +28,6 @@ import com.afollestad.materialdialogs.internal.list.DialogRecyclerView
 import com.afollestad.materialdialogs.internal.main.DialogLayout
 import com.afollestad.materialdialogs.internal.main.DialogScrollView
 import com.afollestad.materialdialogs.list.getListAdapter
-import com.afollestad.materialdialogs.utils.addContentMessageView
-import com.afollestad.materialdialogs.utils.addContentScrollView
 import com.afollestad.materialdialogs.utils.hideKeyboard
 import com.afollestad.materialdialogs.utils.inflate
 import com.afollestad.materialdialogs.utils.isVisible
@@ -77,11 +75,6 @@ class MaterialDialog(
     internal set
 
   internal val view: DialogLayout = inflate(R.layout.md_dialog_base)
-  internal var textViewMessage: TextView? = null
-  internal var contentScrollView: DialogScrollView? = null
-  internal var contentScrollViewFrame: LinearLayout? = null
-  internal var contentRecyclerView: DialogRecyclerView? = null
-  internal var contentCustomView: View? = null
 
   internal val preShowListeners = mutableListOf<DialogCallback>()
   internal val showListeners = mutableListOf<DialogCallback>()
@@ -153,11 +146,15 @@ class MaterialDialog(
     html: Boolean = false,
     lineHeightMultiplier: Float = 1f
   ): MaterialDialog {
-    if (this.contentCustomView != null) {
-      throw IllegalStateException("message() should be used BEFORE customView().")
-    }
-    addContentScrollView()
-    addContentMessageView(res, text, html, lineHeightMultiplier)
+    assertOneSet("message", text, res)
+    this.view.contentLayout.setMessage(
+        dialog = this,
+        res = res,
+        text = text,
+        html = html,
+        lineHeightMultiplier = lineHeightMultiplier,
+        typeface = this.bodyFont
+    )
     return this
   }
 
