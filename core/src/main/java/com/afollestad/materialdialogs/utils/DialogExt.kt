@@ -26,6 +26,8 @@ import com.afollestad.materialdialogs.R
 import com.afollestad.materialdialogs.callbacks.invokeAll
 import com.afollestad.materialdialogs.checkbox.getCheckBoxPrompt
 import com.afollestad.materialdialogs.customview.CUSTOM_VIEW_NO_PADDING
+import com.afollestad.materialdialogs.utils.MDUtil.getDrawable
+import com.afollestad.materialdialogs.utils.MDUtil.getString
 
 internal fun MaterialDialog.setWindowConstraints() {
   window!!.setSoftInputMode(SOFT_INPUT_ADJUST_RESIZE)
@@ -81,14 +83,16 @@ internal fun MaterialDialog.preShow() {
   this.view.apply {
     if (titleLayout.shouldNotBeVisible() && !customViewNoPadding) {
       // Reduce top and bottom padding if we have no title
-      contentLayout.modifyPadding(
+      contentLayout.modifyFirstAndLastPadding(
           top = frameMarginVerticalLess,
           bottom = frameMarginVerticalLess
       )
     }
     if (getCheckBoxPrompt().isVisible()) {
       // Zero out bottom content padding if we have a checkbox prompt
-      contentLayout.updatePadding(bottom = 0)
+      contentLayout.modifyFirstAndLastPadding(bottom = 0)
+    } else if (contentLayout.haveMoreThanOneChild()) {
+      contentLayout.modifyScrollViewPadding(bottom = frameMarginVerticalLess)
     }
   }
 }
@@ -116,7 +120,7 @@ internal fun MaterialDialog.populateText(
   typeface: Typeface?,
   textColor: Int? = null
 ) {
-  val value = text ?: Util.getString(this, textRes, fallback)
+  val value = text ?: getString(this, textRes, fallback)
   if (value != null) {
     (textView.parent as View).visibility = View.VISIBLE
     textView.visibility = View.VISIBLE
