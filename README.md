@@ -1,11 +1,13 @@
 # Material Dialogs
 
-**Looking for the README for versions before 2.0? [Click here](README_OLD.md). Note that pre-2.0 
-versions will no longer receive support.**
-
 [![Build Status](https://travis-ci.org/afollestad/material-dialogs.svg)](https://travis-ci.org/afollestad/material-dialogs)
 [![Codacy Badge](https://api.codacy.com/project/badge/Grade/0a4acc30a9ce440087f7688735359bb8)](https://www.codacy.com/app/drummeraidan_50/material-dialogs?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=afollestad/material-dialogs&amp;utm_campaign=Badge_Grade)
 [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
+
+[ ![Core](https://api.bintray.com/packages/drummer-aidan/maven/material-dialogs%3Acore/images/download.svg) ](https://bintray.com/drummer-aidan/maven/material-dialogs%3Acore/_latestVersion)
+[ ![Input](https://api.bintray.com/packages/drummer-aidan/maven/material-dialogs%3Ainput/images/download.svg) ](https://bintray.com/drummer-aidan/maven/material-dialogs%3Ainput/_latestVersion)
+[ ![Files](https://api.bintray.com/packages/drummer-aidan/maven/material-dialogs%3Afiles/images/download.svg) ](https://bintray.com/drummer-aidan/maven/material-dialogs%3Afiles/_latestVersion)
+[ ![Color](https://api.bintray.com/packages/drummer-aidan/maven/material-dialogs%3Acolor/images/download.svg) ](https://bintray.com/drummer-aidan/maven/material-dialogs%3Acolor/_latestVersion)
 
 #### [View Releases and Changelogs](https://github.com/afollestad/material-dialogs/releases)
 
@@ -81,7 +83,7 @@ core and normal-use functionality.
 ```gradle
 dependencies {
   ...
-  implementation 'com.afollestad.material-dialogs:core:2.0.0-beta6'
+  implementation 'com.afollestad.material-dialogs:core:2.0.0-rc1'
 }
 ```
 
@@ -709,7 +711,7 @@ The `input` module contains extensions to the core module, such as a text input 
 ```gradle
 dependencies {
   ...
-  implementation 'com.afollestad.material-dialogs:input:2.0.0-beta6'
+  implementation 'com.afollestad.material-dialogs:input:2.0.0-rc1'
 }
 ```
 
@@ -837,10 +839,10 @@ starts with the letter 'a':
 ```kotlin
 MaterialDialog(this)
   .input(waitForPositiveButton = false) { dialog, text ->
-    val inputField = dialog.getInputField()!!
+    val inputField = dialog.getInputField()
     val isValid = text.startsWith("a", true)
     
-    inputField.error = if (isValid) null else "Must start with an 'a'!"
+    inputField?.error = if (isValid) null else "Must start with an 'a'!"
     dialog.setActionButtonEnabled(POSITIVE, isValid)
   }
   .positiveButton(R.string.submit)
@@ -860,7 +862,7 @@ The `files` module contains extensions to the core module, such as a file and fo
 ```gradle
 dependencies {
   ...
-  implementation 'com.afollestad.material-dialogs:files:2.0.0-beta6'
+  implementation 'com.afollestad.material-dialogs:files:2.0.0-rc1'
 }
 ```
 
@@ -1030,7 +1032,7 @@ The `color` module contains extensions to the core module, such as a color choos
 ```gradle
 dependencies {
   ...
-  implementation 'com.afollestad.material-dialogs:color:2.0.0-beta6'
+  implementation 'com.afollestad.material-dialogs:color:2.0.0-rc1'
 }
 ```
 

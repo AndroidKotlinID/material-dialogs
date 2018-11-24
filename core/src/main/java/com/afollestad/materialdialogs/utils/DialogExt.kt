@@ -26,20 +26,20 @@ import com.afollestad.materialdialogs.R
 import com.afollestad.materialdialogs.callbacks.invokeAll
 import com.afollestad.materialdialogs.checkbox.getCheckBoxPrompt
 import com.afollestad.materialdialogs.customview.CUSTOM_VIEW_NO_PADDING
-import com.afollestad.materialdialogs.utils.MDUtil.getDrawable
-import com.afollestad.materialdialogs.utils.MDUtil.getString
+import com.afollestad.materialdialogs.utils.MDUtil.resolveDrawable
+import com.afollestad.materialdialogs.utils.MDUtil.resolveString
 
 internal fun MaterialDialog.setWindowConstraints() {
-  window!!.setSoftInputMode(SOFT_INPUT_ADJUST_RESIZE)
+  window?.setSoftInputMode(SOFT_INPUT_ADJUST_RESIZE) ?: return
+  val wm = this.window?.windowManager ?: return
 
-  val wm = this.window!!.windowManager
   val display = wm.defaultDisplay
   val size = Point()
   display.getSize(size)
   val windowWidth = size.x
   val windowHeight = size.y
 
-  context.resources.apply {
+  context.resources.run {
     val windowVerticalPadding = getDimensionPixelSize(
         R.dimen.md_dialog_vertical_margin
     )
@@ -59,9 +59,9 @@ internal fun MaterialDialog.setWindowConstraints() {
 
 internal fun MaterialDialog.setDefaults() {
   // Background color and corner radius
-  var backgroundColor = getColor(attr = R.attr.md_background_color)
+  var backgroundColor = resolveColor(attr = R.attr.md_background_color)
   if (backgroundColor == 0) {
-    backgroundColor = getColor(attr = R.attr.colorBackgroundFloating)
+    backgroundColor = resolveColor(attr = R.attr.colorBackgroundFloating)
   }
   colorBackground(color = backgroundColor)
   // Fonts
@@ -80,7 +80,7 @@ internal fun MaterialDialog.preShow() {
   val customViewNoPadding = config[CUSTOM_VIEW_NO_PADDING] as? Boolean == true
   this.preShowListeners.invokeAll(this)
 
-  this.view.apply {
+  this.view.run {
     if (titleLayout.shouldNotBeVisible() && !customViewNoPadding) {
       // Reduce top and bottom padding if we have no title
       contentLayout.modifyFirstAndLastPadding(
@@ -102,7 +102,7 @@ internal fun MaterialDialog.populateIcon(
   @DrawableRes iconRes: Int?,
   icon: Drawable?
 ) {
-  val drawable = getDrawable(windowContext, res = iconRes, fallback = icon)
+  val drawable = resolveDrawable(windowContext, res = iconRes, fallback = icon)
   if (drawable != null) {
     (imageView.parent as View).visibility = View.VISIBLE
     imageView.visibility = View.VISIBLE
@@ -120,7 +120,7 @@ internal fun MaterialDialog.populateText(
   typeface: Typeface?,
   textColor: Int? = null
 ) {
-  val value = text ?: getString(this, textRes, fallback)
+  val value = text ?: resolveString(this, textRes, fallback)
   if (value != null) {
     (textView.parent as View).visibility = View.VISIBLE
     textView.visibility = View.VISIBLE
@@ -152,6 +152,6 @@ internal fun MaterialDialog.colorBackground(@ColorInt color: Int): MaterialDialo
   val drawable = GradientDrawable()
   drawable.cornerRadius = dimen(attr = R.attr.md_corner_radius)
   drawable.setColor(color)
-  window!!.setBackgroundDrawable(drawable)
+  window?.setBackgroundDrawable(drawable)
   return this
 }
