@@ -22,14 +22,10 @@ android {
         'src/main/res-public'
     ]
   }
-
-  compileOptions {
-    kotlinOptions.freeCompilerArgs += ['-module-name', "com.afollestad.material-dialogs.input"]
-  }
 }
 
 dependencies {
-  implementation 'com.google.android.material:material:' + versions.androidx
+  implementation 'com.google.android.material:material:' + versions.androidxMaterial
   implementation 'org.jetbrains.kotlin:kotlin-stdlib-jdk7:' + versions.kotlin
   implementation project(':core')
 }

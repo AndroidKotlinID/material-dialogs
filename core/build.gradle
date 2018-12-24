@@ -22,17 +22,13 @@ android {
         'src/main/res-public'
     ]
   }
-
-  compileOptions {
-    kotlinOptions.freeCompilerArgs += ['-module-name', "com.afollestad.material-dialogs.core"]
-  }
 }
 
 dependencies {
-  api 'androidx.annotation:annotation:' + versions.androidx
-  api 'androidx.appcompat:appcompat:' + versions.androidx
+  api 'androidx.appcompat:appcompat:' + versions.androidxCore
+  api 'androidx.annotation:annotation:' + versions.androidxAnnotation
 
-  implementation 'androidx.recyclerview:recyclerview:' + versions.androidx
+  implementation 'androidx.recyclerview:recyclerview:' + versions.androidxRecyclerView
   implementation 'org.jetbrains.kotlin:kotlin-stdlib-jdk7:' + versions.kotlin
 }
 
