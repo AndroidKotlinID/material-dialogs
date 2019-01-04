@@ -83,7 +83,7 @@ core and normal-use functionality.
 ```gradle
 dependencies {
   ...
-  implementation 'com.afollestad.material-dialogs:core:2.0.0-rc5'
+  implementation 'com.afollestad.material-dialogs:core:2.0.0-rc7'
 }
 ```
 
@@ -703,7 +703,7 @@ The `input` module contains extensions to the core module, such as a text input 
 ```gradle
 dependencies {
   ...
-  implementation 'com.afollestad.material-dialogs:input:2.0.0-rc5'
+  implementation 'com.afollestad.material-dialogs:input:2.0.0-rc7'
 }
 ```
 
@@ -753,6 +753,18 @@ MaterialDialog(this).show {
 
   input(waitForPositiveButton = false) { dialog, text ->
       // Text changed
+  }
+  positiveButton(R.string.done)
+}
+```
+
+To allow the positive action button to be pressed even when the input is empty:
+
+```kotlin
+MaterialDialog(this).show {
+
+  input(allowEmpty = true) { dialog, text ->
+      // Text submitted with the action button, might be an empty string`
   }
   positiveButton(R.string.done)
 }
@@ -861,7 +873,7 @@ The `files` module contains extensions to the core module, such as a file and fo
 ```gradle
 dependencies {
   ...
-  implementation 'com.afollestad.material-dialogs:files:2.0.0-rc5'
+  implementation 'com.afollestad.material-dialogs:files:2.0.0-rc7'
 }
 ```
 
@@ -1040,7 +1052,7 @@ The `color` module contains extensions to the core module, such as a color choos
 ```gradle
 dependencies {
   ...
-  implementation 'com.afollestad.material-dialogs:color:2.0.0-rc5'
+  implementation 'com.afollestad.material-dialogs:color:2.0.0-rc7'
 }
 ```
 

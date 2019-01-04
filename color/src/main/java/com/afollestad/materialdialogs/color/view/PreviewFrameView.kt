@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.afollestad.materialdialogs.color
+package com.afollestad.materialdialogs.color.view
 
 import android.content.Context
 import android.content.res.ColorStateList
@@ -24,15 +24,16 @@ import android.graphics.drawable.ColorDrawable
 import android.util.AttributeSet
 import android.view.LayoutInflater
 import android.view.View
-import android.widget.EditText
 import android.widget.FrameLayout
 import android.widget.TextView
 import androidx.annotation.ColorInt
 import androidx.core.view.ViewCompat
+import com.afollestad.materialdialogs.color.R
+import com.afollestad.materialdialogs.color.R.drawable
+import com.afollestad.materialdialogs.color.R.layout
 import com.afollestad.materialdialogs.color.utils.hexValue
-import com.afollestad.materialdialogs.utils.MDUtil.textChanged
-import com.afollestad.materialdialogs.utils.MDUtil.isColorDark
 import com.afollestad.materialdialogs.color.utils.toColor
+import com.afollestad.materialdialogs.utils.MDUtil.isColorDark
 
 internal typealias HexColorChanged = (Int) -> Boolean
 
@@ -48,15 +49,17 @@ internal class PreviewFrameView(
 
   lateinit var argbView: View
   lateinit var hexPrefixView: TextView
-  lateinit var hexValueView: EditText
+  lateinit var hexValueView: ObservableEditText
 
   var supportCustomAlpha: Boolean = true
   var onHexChanged: HexColorChanged = { true }
+  var color: Int? = null
+    private set
 
   init {
-    setBackgroundResource(R.drawable.transparent_rect_repeat)
+    setBackgroundResource(drawable.transparent_rect_repeat)
     LayoutInflater.from(context)
-        .inflate(R.layout.md_color_chooser_preview_frame, this)
+        .inflate(layout.md_color_chooser_preview_frame, this)
   }
 
   override fun onFinishInflate() {
@@ -65,31 +68,38 @@ internal class PreviewFrameView(
     hexPrefixView = findViewById(R.id.hexPrefixView)
     hexValueView = findViewById(R.id.hexValueView)
 
-    hexValueView.textChanged {
+    hexValueView.observe {
       if (it.length < 4) {
-        return@textChanged
+        return@observe
       }
-      val newColor = it.toString().toColor() ?: return@textChanged
+      val newColor = it.toColor() ?: return@observe
       if (onHexChanged(newColor)) {
-        hexValueView.post { hexValueView.setSelection(hexValueView.text.length) }
+        setColor(newColor)
       }
     }
   }
 
   fun setColor(@ColorInt color: Int) {
-    argbView.background = ColorDrawable(color)
-    hexValueView.setText(color.hexValue(supportCustomAlpha))
-    hexValueView.post { hexValueView.setSelection(hexValueView.text.length) }
-
-    val tintColor = if (color.isColorDark() &&
-        Color.alpha(color) >= HEX_VALUE_ALPHA_THRESHOLD
-    ) {
-      WHITE
-    } else {
-      BLACK
+    if (this.color == color) {
+      // Not changed
+      return
     }
+    this.color = color
+
+    argbView.background = ColorDrawable(color)
+    hexValueView.updateText(color.hexValue(supportCustomAlpha))
+    hexValueView.post { hexValueView.setSelection(hexValueView.textLength) }
+
+    val tintColor = tintColor(color)
     hexPrefixView.setTextColor(tintColor)
     hexValueView.setTextColor(tintColor)
     ViewCompat.setBackgroundTintList(hexValueView, ColorStateList.valueOf(tintColor))
   }
+
+  private fun tintColor(color: Int) =
+    if (color.isColorDark() && Color.alpha(color) >= HEX_VALUE_ALPHA_THRESHOLD) {
+      WHITE
+    } else {
+      BLACK
+    }
 }

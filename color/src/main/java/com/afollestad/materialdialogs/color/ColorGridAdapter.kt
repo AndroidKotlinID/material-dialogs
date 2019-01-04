@@ -28,6 +28,7 @@ import com.afollestad.materialdialogs.WhichButton.POSITIVE
 import com.afollestad.materialdialogs.actions.hasActionButtons
 import com.afollestad.materialdialogs.actions.setActionButtonEnabled
 import com.afollestad.materialdialogs.color.utils.setVisibleOrGone
+import com.afollestad.materialdialogs.color.view.ColorCircleView
 import com.afollestad.materialdialogs.list.getItemSelector
 import com.afollestad.materialdialogs.utils.MDUtil.isColorDark
 import com.afollestad.materialdialogs.utils.MDUtil.resolveColor
@@ -159,7 +160,7 @@ internal class ColorGridAdapter(
     viewType: Int
   ): ColorGridViewHolder {
     val layoutRes =
-      if (viewType == 1) R.layout.md_color_grid_item_goup
+      if (viewType == 1) R.layout.md_color_grid_item_go_up
       else R.layout.md_color_grid_item
     val view = LayoutInflater.from(parent.context)
         .inflate(layoutRes, parent, false)

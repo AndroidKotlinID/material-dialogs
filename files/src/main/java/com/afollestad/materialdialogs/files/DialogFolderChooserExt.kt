@@ -13,6 +13,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+@file:Suppress("unused")
+
 package com.afollestad.materialdialogs.files
 
 import android.annotation.SuppressLint
@@ -26,8 +28,8 @@ import com.afollestad.materialdialogs.WhichButton.POSITIVE
 import com.afollestad.materialdialogs.actions.setActionButtonEnabled
 import com.afollestad.materialdialogs.customview.customView
 import com.afollestad.materialdialogs.customview.getCustomView
-import com.afollestad.materialdialogs.files.utilext.hasReadStoragePermission
-import com.afollestad.materialdialogs.files.utilext.hasWriteStoragePermission
+import com.afollestad.materialdialogs.files.util.hasReadStoragePermission
+import com.afollestad.materialdialogs.files.util.hasWriteStoragePermission
 import com.afollestad.materialdialogs.internal.list.DialogRecyclerView
 import com.afollestad.materialdialogs.utils.MDUtil.maybeSetTextColor
 import java.io.File
@@ -54,20 +56,35 @@ fun MaterialDialog.selectedFolder(): File? {
 @SuppressLint("CheckResult")
 fun MaterialDialog.folderChooser(
   initialDirectory: File = getExternalStorageDirectory(),
-  filter: FileFilter = { !it.isHidden },
+  filter: FileFilter = null,
   waitForPositiveButton: Boolean = true,
   emptyTextRes: Int = R.string.files_default_empty_text,
   allowFolderCreation: Boolean = false,
   @StringRes folderCreationLabel: Int? = null,
   selection: FileCallback = null
 ): MaterialDialog {
+  var actualFilter: FileFilter = filter
+
   if (allowFolderCreation) {
     check(hasWriteStoragePermission()) {
       "You must have the WRITE_EXTERNAL_STORAGE permission first."
     }
-  }
-  check(hasReadStoragePermission()) {
-    "You must have the READ_EXTERNAL_STORAGE permission first."
+    check(initialDirectory.canWrite()) {
+      "${initialDirectory.absolutePath} is not writeable to your app."
+    }
+    if (filter == null) {
+      actualFilter = { !it.isHidden && it.canWrite() }
+    }
+  } else {
+    check(hasReadStoragePermission()) {
+      "You must have the READ_EXTERNAL_STORAGE permission first."
+    }
+    check(initialDirectory.canRead()) {
+      "${initialDirectory.absolutePath} is not readable to your app."
+    }
+    if (filter == null) {
+      actualFilter = { !it.isHidden && it.canRead() }
+    }
   }
 
   customView(R.layout.md_file_chooser_base, noVerticalPadding = true)
@@ -87,7 +104,7 @@ fun MaterialDialog.folderChooser(
       waitForPositiveButton = waitForPositiveButton,
       emptyView = emptyText,
       onlyFolders = true,
-      filter = filter,
+      filter = actualFilter,
       allowFolderCreation = allowFolderCreation,
       folderCreationLabel = folderCreationLabel,
       callback = selection
