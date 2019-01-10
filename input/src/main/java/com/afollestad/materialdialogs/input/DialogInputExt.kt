@@ -19,6 +19,7 @@ package com.afollestad.materialdialogs.input
 
 import android.annotation.SuppressLint
 import android.text.InputType
+import android.widget.EditText
 import androidx.annotation.CheckResult
 import androidx.annotation.StringRes
 import com.afollestad.materialdialogs.MaterialDialog
@@ -34,9 +35,27 @@ import com.google.android.material.textfield.TextInputLayout
 
 typealias InputCallback = ((MaterialDialog, CharSequence) -> Unit)?
 
-@CheckResult fun MaterialDialog.getInputLayout() = getCustomView() as? TextInputLayout
+/**
+ * Gets the input layout for the dialog if it's an input dialog.
+ *
+ * @throws IllegalStateException if the dialog is not an input dialog.
+ */
+@CheckResult fun MaterialDialog.getInputLayout(): TextInputLayout {
+  return getCustomView() as? TextInputLayout ?: throw IllegalStateException(
+      "You have not setup this dialog as an input dialog."
+  )
+}
 
-@CheckResult fun MaterialDialog.getInputField() = getInputLayout()?.editText
+/**
+ * Gets the input EditText for the dialog if it's an input dialog.
+ *
+ * @throws IllegalStateException if the dialog is not an input dialog.
+ */
+@CheckResult fun MaterialDialog.getInputField(): EditText {
+  return getInputLayout().editText ?: throw IllegalStateException(
+      "You have not setup this dialog as an input dialog."
+  )
+}
 
 /**
  * Shows an input field as the content of the dialog. Can be used with a message and checkbox
@@ -77,11 +96,11 @@ fun MaterialDialog.input(
 
   if (callback != null && waitForPositiveButton) {
     // Add an additional callback to invoke the input listener after the positive AB is pressed
-    positiveButton { callback.invoke(this@input, getInputField()?.text ?: "") }
+    positiveButton { callback.invoke(this@input, getInputField().text ?: "") }
   }
 
   val resources = windowContext.resources
-  val editText = getInputField() ?: return this
+  val editText = getInputField()
 
   val prefillText = prefill ?: if (prefillRes != null) resources.getString(prefillRes) else null
   if (prefillText != null) {
@@ -97,7 +116,7 @@ fun MaterialDialog.input(
   editText.inputType = inputType
 
   if (maxLength != null) {
-    getInputLayout()?.run {
+    getInputLayout().run {
       isCounterEnabled = true
       counterMaxLength = maxLength
     }

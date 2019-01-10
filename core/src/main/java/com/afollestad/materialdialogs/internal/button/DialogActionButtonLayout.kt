@@ -56,10 +56,8 @@ internal class DialogActionButtonLayout(
   private val buttonHeightDefault = dimenPx(R.dimen.md_action_button_height)
   private val buttonHeightStacked = dimenPx(R.dimen.md_stacked_action_button_height)
   private val buttonFramePadding = dimenPx(R.dimen.md_action_button_frame_padding)
-  private val buttonFramePaddingFirstChild =
-    dimenPx(R.dimen.md_action_button_frame_padding_first_child)
   private val buttonFramePaddingNeutral = dimenPx(R.dimen.md_action_button_frame_padding_neutral)
-  private val buttonSpacing = dimenPx(R.dimen.md_action_button_spacing)
+  private val buttonSpacing = 0
 
   private val checkBoxPromptMarginVertical = dimenPx(R.dimen.md_checkbox_prompt_margin_vertical)
   private val checkBoxPromptMarginHorizontal = dimenPx(R.dimen.md_checkbox_prompt_margin_horizontal)
@@ -136,8 +134,19 @@ internal class DialogActionButtonLayout(
       for (button in visibleButtons) {
         totalWidth += button.measuredWidth + buttonSpacing
       }
-      if (totalWidth >= parentWidth) {
+      if (totalWidth >= parentWidth && !stackButtons) {
         stackButtons = true
+        for (button in visibleButtons) {
+          button.measure(
+              makeMeasureSpec(parentWidth, EXACTLY),
+              makeMeasureSpec(buttonHeightStacked, EXACTLY)
+          )
+          button.update(
+              baseContext = baseContext,
+              appContext = appContext,
+              stacked = true
+          )
+        }
       }
     }
 
@@ -206,7 +215,7 @@ internal class DialogActionButtonLayout(
         )
       }
 
-      var leftX = buttonFramePaddingFirstChild
+      var leftX = buttonFramePadding
       if (actionButtons[INDEX_POSITIVE].isVisible()) {
         val btn = actionButtons[INDEX_POSITIVE]
         val rightX = leftX + btn.measuredWidth
@@ -233,7 +242,7 @@ internal class DialogActionButtonLayout(
         )
       }
 
-      var rightX = measuredWidth - buttonFramePaddingFirstChild
+      var rightX = measuredWidth - buttonFramePadding
       if (actionButtons[INDEX_POSITIVE].isVisible()) {
         val btn = actionButtons[INDEX_POSITIVE]
         val leftX = rightX - btn.measuredWidth
