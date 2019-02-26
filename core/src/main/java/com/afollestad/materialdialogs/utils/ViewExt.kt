@@ -94,15 +94,13 @@ internal fun <T : View> T.isRtl(): Boolean {
 internal fun TextView.setGravityStartCompat() {
   if (SDK_INT >= JELLY_BEAN_MR1) {
     this.textAlignment = View.TEXT_ALIGNMENT_VIEW_START
-  } else {
-    this.gravity = Gravity.START
   }
+  this.gravity = Gravity.START
 }
 
 internal fun TextView.setGravityEndCompat() {
   if (SDK_INT >= JELLY_BEAN_MR1) {
     this.textAlignment = View.TEXT_ALIGNMENT_VIEW_END
-  } else {
-    this.gravity = Gravity.END
   }
+  this.gravity = Gravity.END
 }
