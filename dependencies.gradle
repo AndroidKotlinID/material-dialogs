@@ -3,8 +3,8 @@ ext.versions = [
     minSdk              : 16,
     compileSdk          : 28,
     buildTools          : '28.0.3',
-    publishVersion      : '2.0.2',
-    publishVersionCode  : 231,
+    publishVersion      : '2.0.3',
+    publishVersionCode  : 232,
 
     // Plugins
     gradlePlugin        : '3.3.1',
@@ -14,7 +14,7 @@ ext.versions = [
 
     // AndroidX
     androidxCore        : '1.0.2',
-    androidxAnnotation  : '1.0.1',
+    androidxAnnotation  : '1.0.2',
     androidxRecyclerView: '1.0.0',
     androidxMaterial    : '1.0.0',
 
