@@ -4,10 +4,11 @@
 [![Codacy Badge](https://api.codacy.com/project/badge/Grade/0a4acc30a9ce440087f7688735359bb8)](https://www.codacy.com/app/drummeraidan_50/material-dialogs?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=afollestad/material-dialogs&amp;utm_campaign=Badge_Grade)
 [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
 
-[ ![Core](https://api.bintray.com/packages/drummer-aidan/maven/material-dialogs%3Acore/images/download.svg) ](https://bintray.com/drummer-aidan/maven/material-dialogs%3Acore/_latestVersion)
-[ ![Input](https://api.bintray.com/packages/drummer-aidan/maven/material-dialogs%3Ainput/images/download.svg) ](https://bintray.com/drummer-aidan/maven/material-dialogs%3Ainput/_latestVersion)
-[ ![Files](https://api.bintray.com/packages/drummer-aidan/maven/material-dialogs%3Afiles/images/download.svg) ](https://bintray.com/drummer-aidan/maven/material-dialogs%3Afiles/_latestVersion)
-[ ![Color](https://api.bintray.com/packages/drummer-aidan/maven/material-dialogs%3Acolor/images/download.svg) ](https://bintray.com/drummer-aidan/maven/material-dialogs%3Acolor/_latestVersion)
+![Core](https://img.shields.io/bintray/v/drummer-aidan/maven/material-dialogs:core.svg?label=core)
+![Input](https://img.shields.io/bintray/v/drummer-aidan/maven/material-dialogs:input.svg?label=input)
+![Files](https://img.shields.io/bintray/v/drummer-aidan/maven/material-dialogs:files.svg?label=files)
+![Color](https://img.shields.io/bintray/v/drummer-aidan/maven/material-dialogs:color.svg?label=color)
+![Lifecycle](https://img.shields.io/bintray/v/drummer-aidan/maven/material-dialogs:lifecycle.svg?label=lifecycle)
 
 #### [View Releases and Changelogs](https://github.com/afollestad/material-dialogs/releases)
 
@@ -69,6 +70,11 @@
     1. [Basics](#basics-4)
     2. [Sub Colors](#sub-colors) 
 
+# Table of Contents - Lifecycle
+
+1. [Gradle Dependency](#gradle-dependency-4)
+2. [Usage](#usage)
+
 ---
 
 # Core
@@ -83,7 +89,7 @@ core and normal-use functionality.
 ```gradle
 dependencies {
   ...
-  implementation 'com.afollestad.material-dialogs:core:2.0.3'
+  implementation 'com.afollestad.material-dialogs:core:2.1.0'
 }
 ```
 
@@ -669,7 +675,7 @@ The `input` module contains extensions to the core module, such as a text input 
 ```gradle
 dependencies {
   ...
-  implementation 'com.afollestad.material-dialogs:input:2.0.3'
+  implementation 'com.afollestad.material-dialogs:input:2.1.0'
 }
 ```
 
@@ -828,7 +834,7 @@ The `files` module contains extensions to the core module, such as a file and fo
 ```gradle
 dependencies {
   ...
-  implementation 'com.afollestad.material-dialogs:files:2.0.3'
+  implementation 'com.afollestad.material-dialogs:files:2.1.0'
 }
 ```
 
@@ -998,7 +1004,7 @@ The `color` module contains extensions to the core module, such as a color choos
 ```gradle
 dependencies {
   ...
-  implementation 'com.afollestad.material-dialogs:color:2.0.3'
+  implementation 'com.afollestad.material-dialogs:color:2.1.0'
 }
 ```
 
@@ -1081,3 +1087,33 @@ MaterialDialog(this).show {
 ```
 
 Omitting `showAlphaSelector` will hide the alpha (transparency) selector.
+
+---
+
+# Lifecycle
+
+## Gradle Dependency
+
+[ ![Lifecycle](https://api.bintray.com/packages/drummer-aidan/maven/material-dialogs%3Alifecycle/images/download.svg) ](https://bintray.com/drummer-aidan/maven/material-dialogs%3Alifecycle/_latestVersion)
+
+The `lifecycle` module contains extensions to make dialogs work with AndroidX lifecycles.
+
+```gradle
+dependencies {
+  ...
+  implementation 'com.afollestad.material-dialogs:lifecycle:2.1.0'
+}
+```
+
+## Usage
+
+```kotlin
+MaterialDialog(this).show {
+  ...
+  lifecycleOwner(owner)
+}
+```
+
+When the given lifecycle owner is destroyed, the dialog is automatically dismissed. Lifecycle 
+owners include Activities and Fragments from AndroidX, along with any class that implements the
+`LifecycleOwner` interface.
