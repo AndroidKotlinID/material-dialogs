@@ -41,6 +41,9 @@ import com.afollestad.materialdialogs.color.ColorPalette
 import com.afollestad.materialdialogs.color.colorChooser
 import com.afollestad.materialdialogs.customview.customView
 import com.afollestad.materialdialogs.customview.getCustomView
+import com.afollestad.materialdialogs.datetime.datePicker
+import com.afollestad.materialdialogs.datetime.dateTimePicker
+import com.afollestad.materialdialogs.datetime.timePicker
 import com.afollestad.materialdialogs.files.fileChooser
 import com.afollestad.materialdialogs.files.folderChooser
 import com.afollestad.materialdialogs.input.input
@@ -69,6 +72,8 @@ import kotlinx.android.synthetic.main.activity_main.colorChooser_primary_customA
 import kotlinx.android.synthetic.main.activity_main.colorChooser_primary_customRgb
 import kotlinx.android.synthetic.main.activity_main.custom_view
 import kotlinx.android.synthetic.main.activity_main.custom_view_webview
+import kotlinx.android.synthetic.main.activity_main.date_picker
+import kotlinx.android.synthetic.main.activity_main.datetime_picker
 import kotlinx.android.synthetic.main.activity_main.file_chooser
 import kotlinx.android.synthetic.main.activity_main.file_chooser_buttons
 import kotlinx.android.synthetic.main.activity_main.file_chooser_filter
@@ -102,6 +107,7 @@ import kotlinx.android.synthetic.main.activity_main.single_choice_buttons_titled
 import kotlinx.android.synthetic.main.activity_main.single_choice_disabled_items
 import kotlinx.android.synthetic.main.activity_main.single_choice_long_items
 import kotlinx.android.synthetic.main.activity_main.single_choice_titled
+import kotlinx.android.synthetic.main.activity_main.time_picker
 
 /** @author Aidan Follestad (afollestad) */
 class MainActivity : AppCompatActivity() {
@@ -741,6 +747,33 @@ class MainActivity : AppCompatActivity() {
     folder_chooser_buttons.setOnClickListener { showFolderChooserButtons() }
 
     folder_chooser_filter.setOnClickListener { showFolderChooserFilter() }
+
+    date_picker.setOnClickListener {
+      MaterialDialog(this).show {
+        title(text = "Select Date")
+        datePicker { _, date ->
+          toast("Selected date: ${date.formatDate()}")
+        }
+      }
+    }
+
+    time_picker.setOnClickListener {
+      MaterialDialog(this).show {
+        title(text = "Select Time")
+        timePicker { _, time ->
+          toast("Selected time: ${time.formatTime()}")
+        }
+      }
+    }
+
+    datetime_picker.setOnClickListener {
+      MaterialDialog(this).show {
+        title(text = "Select Date and Time")
+        dateTimePicker(requireFutureDateTime = true) { _, dateTime ->
+          toast("Selected date/time: ${dateTime.formatDateTime()}")
+        }
+      }
+    }
   }
 
   private fun showCustomViewDialog() {
@@ -749,7 +782,8 @@ class MainActivity : AppCompatActivity() {
       customView(R.layout.custom_view, scrollable = true)
       positiveButton(R.string.connect) { dialog ->
         // Pull the password out of the custom view when the positive button is pressed
-        val passwordInput: EditText = dialog.getCustomView().findViewById(R.id.password)
+        val passwordInput: EditText = dialog.getCustomView()
+            .findViewById(R.id.password)
         toast("Password: $passwordInput")
       }
       negativeButton(android.R.string.cancel)
@@ -762,9 +796,9 @@ class MainActivity : AppCompatActivity() {
     val showPasswordCheck: CheckBox = customView.findViewById(R.id.showPassword)
     showPasswordCheck.setOnCheckedChangeListener { _, isChecked ->
       passwordInput.inputType =
-          if (!isChecked) InputType.TYPE_TEXT_VARIATION_PASSWORD else InputType.TYPE_CLASS_TEXT
+        if (!isChecked) InputType.TYPE_TEXT_VARIATION_PASSWORD else InputType.TYPE_CLASS_TEXT
       passwordInput.transformationMethod =
-          if (!isChecked) PasswordTransformationMethod.getInstance() else null
+        if (!isChecked) PasswordTransformationMethod.getInstance() else null
     }
   }
 
@@ -775,7 +809,8 @@ class MainActivity : AppCompatActivity() {
     }
 
     dialog.onShow {
-      val webView: WebView = it.getCustomView().findViewById(R.id.web_view)
+      val webView: WebView = it.getCustomView()
+          .findViewById(R.id.web_view)
       webView.loadData(
           "<h3>WebView Custom View</h3>\n" +
               "\n" +
