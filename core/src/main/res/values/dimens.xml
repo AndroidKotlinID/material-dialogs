@@ -1,7 +1,7 @@
 <!-- See https://material.io/archive/guidelines/components/dialogs.html#dialogs-specs -->
 <resources>
 
-  <dimen name="md_dialog_max_width">356dp</dimen>
+  <dimen name="md_dialog_max_width">280dp</dimen>
   <dimen name="md_dialog_default_corner_radius">2dp</dimen>
   <dimen name="md_dialog_vertical_margin">52dp</dimen>
   <dimen name="md_dialog_horizontal_margin">32dp</dimen>
@@ -12,7 +12,7 @@
   <dimen name="md_dialog_frame_margin_horizontal">24dp</dimen>
 
   <dimen name="md_action_button_frame_spec_height">52dp</dimen>
-  <dimen name="md_action_button_frame_padding_neutral">18dp</dimen>
+  <dimen name="md_action_button_frame_padding_neutral">7dp</dimen>
   <dimen name="md_action_button_frame_padding">8dp</dimen>
   <dimen name="md_action_button_inset_vertical">8dp</dimen>
   <dimen name="md_action_button_inset_horizontal">4dp</dimen>
