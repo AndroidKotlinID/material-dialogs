@@ -140,8 +140,8 @@ object MDUtil {
     return context.resources.getDimensionPixelSize(res)
   }
 
-  @RestrictTo(LIBRARY_GROUP) fun isLandscape(context: Context) =
-    context.resources.configuration.orientation == ORIENTATION_LANDSCAPE
+  @RestrictTo(LIBRARY_GROUP) fun Context.isLandscape() =
+    resources.configuration.orientation == ORIENTATION_LANDSCAPE
 
   @RestrictTo(LIBRARY_GROUP) fun EditText.textChanged(callback: (CharSequence) -> Unit) {
     this.addTextChangedListener(object : TextWatcher {
@@ -168,9 +168,15 @@ object MDUtil {
     @AttrRes attrRes: Int?
   ) {
     if (attrRes == null) return
-    val color = resolveColor(context, attr = attrRes)
-    if (color != 0) {
-      this?.setTextColor(color)
+    resolveColor(context, attr = attrRes).ifNotZero {
+      this?.setTextColor(it)
+    }
+  }
+
+  @RestrictTo(LIBRARY_GROUP)
+  inline fun Int?.ifNotZero(block: (value: Int) -> Unit) {
+    if (this != null && this != 0) {
+      block(this)
     }
   }
 }
