@@ -35,7 +35,7 @@ core and normal-use functionality.
 ```gradle
 dependencies {
   ...
-  implementation 'com.afollestad.material-dialogs:core:2.5.0'
+  implementation 'com.afollestad.material-dialogs:core:2.6.0'
 }
 ```
 
@@ -589,14 +589,18 @@ See the "Custom Theme" example in the sample project (open the overflow menu for
 
 ### Widget Color
 
-By default, widgets like CheckBoxes and RadioButtons use your theme's accent color. You can 
-override that to use whatever color you want. This applies to checkbox prompts, single and multiple 
-choice lists, etc. but will not automatically apply to widgets in your own custom views.
+By default, widgets like CheckBoxes and RadioButtons use your theme's accent color when they are 
+checked. You can override that to use whatever color you want. This applies to checkbox prompts, 
+single and multiple choice lists, etc. but will not automatically apply to widgets in your own 
+custom views.
 
 ```xml
 <style name="AppTheme.Custom" parent="Theme.AppCompat">
 
   <item name="md_widget_color">@color/your_color</item>
+  
+  <!-- Generally this should be avoided, checkboxes should be white or gray when unchecked -->
+  <item name="md_widget_color_unchecked">@color/your_color</item>
     
 </style>
 ```
