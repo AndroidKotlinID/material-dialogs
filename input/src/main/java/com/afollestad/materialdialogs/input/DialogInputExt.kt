@@ -30,6 +30,7 @@ import com.afollestad.materialdialogs.callbacks.onPreShow
 import com.afollestad.materialdialogs.callbacks.onShow
 import com.afollestad.materialdialogs.customview.customView
 import com.afollestad.materialdialogs.customview.getCustomView
+import com.afollestad.materialdialogs.utils.MDUtil.maybeSetTextColor
 import com.afollestad.materialdialogs.utils.MDUtil.textChanged
 import com.google.android.material.textfield.TextInputLayout
 
@@ -41,10 +42,15 @@ typealias InputCallback = ((MaterialDialog, CharSequence) -> Unit)?
  * @throws IllegalStateException if the dialog is not an input dialog.
  */
 @CheckResult fun MaterialDialog.getInputLayout(): TextInputLayout {
+  val key = "[custom_view_input_layout]"
+  return config[key] as? TextInputLayout ?: lookupInputLayout().also {
+    config[key] = it
+  }
+}
+
+private fun MaterialDialog.lookupInputLayout(): TextInputLayout {
   return getCustomView().findViewById(R.id.md_input_layout) as? TextInputLayout
-      ?: throw IllegalStateException(
-          "You have not setup this dialog as an input dialog."
-      )
+      ?: throw IllegalStateException("You have not setup this dialog as an input dialog.")
 }
 
 /**
@@ -100,6 +106,37 @@ fun MaterialDialog.input(
     positiveButton { callback.invoke(this@input, getInputField().text ?: "") }
   }
 
+  prefillInput(prefill = prefill, prefillRes = prefillRes, allowEmpty = allowEmpty)
+  styleInput(hint = hint, hintRes = hintRes, inputType = inputType)
+
+  if (maxLength != null) {
+    getInputLayout().run {
+      isCounterEnabled = true
+      counterMaxLength = maxLength
+    }
+    invalidateInputMaxLength(allowEmpty)
+  }
+
+  getInputField().textChanged {
+    if (!allowEmpty) {
+      setActionButtonEnabled(POSITIVE, it.isNotEmpty())
+    }
+    maxLength?.let { invalidateInputMaxLength(allowEmpty) }
+
+    if (!waitForPositiveButton && callback != null) {
+      // We aren't waiting for positive, so invoke every time the text changes
+      callback.invoke(this, it)
+    }
+  }
+
+  return this
+}
+
+private fun MaterialDialog.prefillInput(
+  prefill: CharSequence?,
+  prefillRes: Int?,
+  allowEmpty: Boolean
+) {
   val resources = windowContext.resources
   val editText = getInputField()
 
@@ -112,30 +149,22 @@ fun MaterialDialog.input(
       POSITIVE,
       allowEmpty || prefillText.isNotEmpty()
   )
+}
+
+private fun MaterialDialog.styleInput(
+  hint: String?,
+  hintRes: Int?,
+  inputType: Int
+) {
+  val resources = windowContext.resources
+  val editText = getInputField()
 
   editText.hint = hint ?: if (hintRes != null) resources.getString(hintRes) else null
   editText.inputType = inputType
-
-  if (maxLength != null) {
-    getInputLayout().run {
-      isCounterEnabled = true
-      counterMaxLength = maxLength
-    }
-    invalidateInputMaxLength(allowEmpty)
-  }
-
-  editText.textChanged {
-    if (!allowEmpty) {
-      setActionButtonEnabled(POSITIVE, it.isNotEmpty())
-    }
-    if (maxLength != null) {
-      invalidateInputMaxLength(allowEmpty)
-    }
-    if (!waitForPositiveButton && callback != null) {
-      // We aren't waiting for positive, so invoke every time the text changes
-      callback.invoke(this, it)
-    }
-  }
-
-  return this
+  editText.maybeSetTextColor(
+      windowContext,
+      attrRes = R.attr.md_color_content,
+      hintAttrRes = R.attr.md_color_hint
+  )
+  bodyFont?.let(editText::setTypeface)
 }
