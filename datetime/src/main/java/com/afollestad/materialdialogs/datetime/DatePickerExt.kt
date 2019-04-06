@@ -29,19 +29,23 @@ import java.util.Calendar
  */
 fun MaterialDialog.datePicker(
   minDate: Calendar? = null,
+  maxDate: Calendar? = null,
   currentDate: Calendar? = null,
   dateCallback: DateTimeCallback = null
 ): MaterialDialog {
   customView(R.layout.md_datetime_picker_date, noVerticalPadding = true)
 
-  minDate?.let {
+  if (minDate != null) {
     getDatePicker().minDate = minDate.timeInMillis
   }
-  currentDate?.let {
+  if (maxDate != null) {
+    getDatePicker().maxDate = maxDate.timeInMillis
+  }
+  if (currentDate != null) {
     getDatePicker().init(
-        it.get(Calendar.YEAR),
-        it.get(Calendar.MONTH),
-        it.get(Calendar.DAY_OF_MONTH),
+        currentDate.get(Calendar.YEAR),
+        currentDate.get(Calendar.MONTH),
+        currentDate.get(Calendar.DAY_OF_MONTH),
         null
     )
   }
