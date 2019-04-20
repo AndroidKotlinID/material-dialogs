@@ -12,11 +12,10 @@
 
 # Modules
 
-Click a module to see the Gradle dependency and a how-to document.
+The core module is the fundamental module that you need in order to use this library. The others 
+are extensions to core.
 
 ## Core
-
-
 
 [ ![Core](https://img.shields.io/bintray/v/drummer-aidan/maven/material-dialogs:core.svg?label=core) ](https://bintray.com/drummer-aidan/maven/material-dialogs%3Acore/_latestVersion)
 
@@ -28,7 +27,7 @@ core and normal-use functionality.
 ```gradle
 dependencies {
   ...
-  implementation 'com.afollestad.material-dialogs:core:2.7.0'
+  implementation 'com.afollestad.material-dialogs:core:2.8.1'
 }
 ```
 
@@ -43,7 +42,7 @@ The `input` module contains extensions to the core module, such as a text input 
 ```gradle
 dependencies {
   ...
-  implementation 'com.afollestad.material-dialogs:input:2.7.0'
+  implementation 'com.afollestad.material-dialogs:input:2.8.1'
 }
 ```
  
@@ -58,7 +57,7 @@ The `files` module contains extensions to the core module, such as a file and fo
 ```gradle
 dependencies {
   ...
-  implementation 'com.afollestad.material-dialogs:files:2.7.0'
+  implementation 'com.afollestad.material-dialogs:files:2.8.1'
 }
 ```
 
@@ -73,7 +72,7 @@ The `color` module contains extensions to the core module, such as a color choos
 ```gradle
 dependencies {
   ...
-  implementation 'com.afollestad.material-dialogs:color:2.7.0'
+  implementation 'com.afollestad.material-dialogs:color:2.8.1'
 }
 ```
 
@@ -88,7 +87,7 @@ The `datetime` module contains extensions to make date, time, and date-time pick
 ```gradle
 dependencies {
   ...
-  implementation 'com.afollestad.material-dialogs:datetime:2.7.0'
+  implementation 'com.afollestad.material-dialogs:datetime:2.8.1'
 }
 ```
 
@@ -103,6 +102,6 @@ The `lifecycle` module contains extensions to make dialogs work with AndroidX li
 ```gradle
 dependencies {
   ...
-  implementation 'com.afollestad.material-dialogs:lifecycle:2.7.0'
+  implementation 'com.afollestad.material-dialogs:lifecycle:2.8.1'
 }
 ```
