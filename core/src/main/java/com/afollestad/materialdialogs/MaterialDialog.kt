@@ -21,6 +21,7 @@ import android.app.Dialog
 import android.content.Context
 import android.graphics.Typeface
 import android.graphics.drawable.Drawable
+import android.view.LayoutInflater
 import androidx.annotation.CheckResult
 import androidx.annotation.DimenRes
 import androidx.annotation.DrawableRes
@@ -35,31 +36,22 @@ import com.afollestad.materialdialogs.callbacks.invokeAll
 import com.afollestad.materialdialogs.internal.list.DialogAdapter
 import com.afollestad.materialdialogs.internal.main.DialogLayout
 import com.afollestad.materialdialogs.list.getListAdapter
+import com.afollestad.materialdialogs.utils.MDUtil.assertOneSet
+import com.afollestad.materialdialogs.utils.MDUtil.resolveDimen
+import com.afollestad.materialdialogs.utils.font
 import com.afollestad.materialdialogs.utils.hideKeyboard
-import com.afollestad.materialdialogs.utils.inflate
 import com.afollestad.materialdialogs.utils.isVisible
 import com.afollestad.materialdialogs.utils.populateIcon
 import com.afollestad.materialdialogs.utils.populateText
-import com.afollestad.materialdialogs.utils.postShow
 import com.afollestad.materialdialogs.utils.preShow
-import com.afollestad.materialdialogs.utils.setDefaults
-import com.afollestad.materialdialogs.utils.setWindowConstraints
-
-internal fun assertOneSet(
-  method: String,
-  b: Any?,
-  a: Int?
-) {
-  if (a == null && b == null) {
-    throw IllegalArgumentException("$method: You must specify a resource ID or literal value")
-  }
-}
+import com.afollestad.materialdialogs.utils.resolveColor
 
 typealias DialogCallback = (MaterialDialog) -> Unit
 
 /** @author Aidan Follestad (afollestad) */
 class MaterialDialog(
-  val windowContext: Context
+  val windowContext: Context,
+  val dialogBehavior: DialogBehavior = ModalDialog
 ) : Dialog(windowContext, inferTheme(windowContext).styleRes) {
 
   /**
@@ -79,16 +71,20 @@ class MaterialDialog(
   /** Returns true if auto dismiss is enabled. */
   var autoDismissEnabled: Boolean = true
     internal set
-
   var titleFont: Typeface? = null
     internal set
   var bodyFont: Typeface? = null
     internal set
   var buttonFont: Typeface? = null
     internal set
+  var cancelOnTouchOutside: Boolean = true
+    internal set
+  var cornerRadius: Float? = null
+    internal set
   @Px private var maxWidth: Int? = null
 
-  internal val view: DialogLayout = inflate(R.layout.md_dialog_base)
+  /** The root layout of the dialog. */
+  val view: DialogLayout
 
   internal val preShowListeners = mutableListOf<DialogCallback>()
   internal val showListeners = mutableListOf<DialogCallback>()
@@ -100,9 +96,22 @@ class MaterialDialog(
   private val neutralListeners = mutableListOf<DialogCallback>()
 
   init {
-    setContentView(view)
-    this.view.dialog = this
-    setDefaults()
+    val layoutInflater = LayoutInflater.from(windowContext)
+    val rootView = dialogBehavior.createView(
+        context = windowContext,
+        window = window!!,
+        layoutInflater = layoutInflater,
+        dialog = this
+    )
+    setContentView(rootView)
+    this.view = dialogBehavior.getDialogLayout(rootView)
+        .also { it.attachDialog(this) }
+
+    // Set defaults
+    this.titleFont = font(attr = R.attr.md_font_title)
+    this.bodyFont = font(attr = R.attr.md_font_body)
+    this.buttonFont = font(attr = R.attr.md_font_button)
+    invalidateBackgroundColorAndRadius()
   }
 
   /**
@@ -320,8 +329,23 @@ class MaterialDialog(
       literal!!
     }
     if (shouldSetConstraints) {
-      setWindowConstraints(this.maxWidth)
+      setWindowConstraints()
     }
+    return this
+  }
+
+  /**
+   * Sets the corner radius for the dialog, or the rounding of the corners. Dialogs can choose
+   * how they want to handle this, e.g. bottom sheets will only round the top left and right
+   * corners.
+   */
+  fun cornerRadius(
+    literal: Float? = null,
+    @DimenRes res: Int? = null
+  ): MaterialDialog {
+    assertOneSet("cornerRadius", literal, res)
+    this.cornerRadius = literal ?: windowContext.resources.getDimension(res!!)
+    invalidateBackgroundColorAndRadius()
     return this
   }
 
@@ -333,10 +357,11 @@ class MaterialDialog(
 
   /** Opens the dialog. */
   override fun show() {
-    setWindowConstraints(maxWidth)
+    setWindowConstraints()
     preShow()
+    dialogBehavior.onPreShow(this)
     super.show()
-    postShow()
+    dialogBehavior.onPostShow(this)
   }
 
   /** Applies multiple properties to the dialog and opens it. */
@@ -354,11 +379,15 @@ class MaterialDialog(
 
   /** A fluent version of [setCanceledOnTouchOutside]. */
   fun cancelOnTouchOutside(cancelable: Boolean): MaterialDialog {
+    cancelOnTouchOutside = true
     this.setCanceledOnTouchOutside(cancelable)
     return this
   }
 
   override fun dismiss() {
+    if (dialogBehavior.onDismiss()) {
+      return
+    }
     hideKeyboard()
     super.dismiss()
   }
@@ -376,5 +405,29 @@ class MaterialDialog(
     if (autoDismissEnabled) {
       dismiss()
     }
+  }
+
+  private fun setWindowConstraints() {
+    dialogBehavior.setWindowConstraints(
+        context = windowContext,
+        maxWidth = maxWidth,
+        window = window!!,
+        view = view
+    )
+  }
+
+  private fun invalidateBackgroundColorAndRadius() {
+    val backgroundColor = resolveColor(attr = R.attr.md_background_color) {
+      resolveColor(attr = R.attr.colorBackgroundFloating)
+    }
+    val cornerRadius =
+      cornerRadius ?: resolveDimen(windowContext, attr = R.attr.md_corner_radius)
+    dialogBehavior.setBackgroundColor(
+        context = windowContext,
+        window = window!!,
+        view = view,
+        color = backgroundColor,
+        cornerRounding = cornerRadius
+    )
   }
 }

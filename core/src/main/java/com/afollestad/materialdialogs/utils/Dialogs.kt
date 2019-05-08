@@ -18,82 +18,27 @@ package com.afollestad.materialdialogs.utils
 import android.content.Context.INPUT_METHOD_SERVICE
 import android.graphics.Typeface
 import android.graphics.drawable.Drawable
-import android.graphics.drawable.GradientDrawable
 import android.view.View
-import android.view.WindowManager
-import android.view.WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE
 import android.view.inputmethod.InputMethodManager
 import android.widget.ImageView
 import android.widget.TextView
-import androidx.annotation.ColorInt
 import androidx.annotation.DrawableRes
-import androidx.annotation.Px
 import androidx.annotation.RestrictTo
 import androidx.annotation.RestrictTo.Scope
 import androidx.annotation.StringRes
 import com.afollestad.materialdialogs.MaterialDialog
-import com.afollestad.materialdialogs.R
-import com.afollestad.materialdialogs.WhichButton.NEGATIVE
-import com.afollestad.materialdialogs.WhichButton.POSITIVE
-import com.afollestad.materialdialogs.actions.getActionButton
 import com.afollestad.materialdialogs.callbacks.invokeAll
 import com.afollestad.materialdialogs.checkbox.getCheckBoxPrompt
 import com.afollestad.materialdialogs.customview.CUSTOM_VIEW_NO_VERTICAL_PADDING
 import com.afollestad.materialdialogs.utils.MDUtil.maybeSetTextColor
 import com.afollestad.materialdialogs.utils.MDUtil.resolveDrawable
 import com.afollestad.materialdialogs.utils.MDUtil.resolveString
-import kotlin.math.min
-
-internal fun MaterialDialog.setWindowConstraints(
-  @Px maxWidth: Int? = null
-) {
-  if (maxWidth == 0) {
-    // Postpone
-    return
-  }
-
-  val win = window ?: return
-  win.setSoftInputMode(SOFT_INPUT_ADJUST_RESIZE)
-  val wm = win.windowManager ?: return
-  val res = context.resources
-  val (windowWidth, windowHeight) = wm.getWidthAndHeight()
-
-  val windowVerticalPadding = res.getDimensionPixelSize(
-      R.dimen.md_dialog_vertical_margin
-  )
-  val windowHorizontalPadding = res.getDimensionPixelSize(
-      R.dimen.md_dialog_horizontal_margin
-  )
-  val calculatedWidth = windowWidth - windowHorizontalPadding * 2
-  val actualMaxWidth =
-    maxWidth ?: res.getDimensionPixelSize(R.dimen.md_dialog_max_width)
-
-  view.maxHeight = windowHeight - windowVerticalPadding * 2
-  val lp = WindowManager.LayoutParams()
-      .apply {
-        copyFrom(win.attributes)
-        width = min(actualMaxWidth, calculatedWidth)
-      }
-  win.attributes = lp
-}
-
-internal fun MaterialDialog.setDefaults() {
-  // Background color and corner radius
-  val backgroundColor = resolveColor(attr = R.attr.md_background_color) {
-    resolveColor(attr = R.attr.colorBackgroundFloating)
-  }
-  colorBackground(color = backgroundColor)
-  // Fonts
-  this.titleFont = font(attr = R.attr.md_font_title)
-  this.bodyFont = font(attr = R.attr.md_font_body)
-  this.buttonFont = font(attr = R.attr.md_font_button)
-}
 
 @RestrictTo(Scope.LIBRARY_GROUP)
 fun MaterialDialog.invalidateDividers(
-  scrolledDown: Boolean,
-  atBottom: Boolean
-) = view.invalidateDividers(scrolledDown, atBottom)
+  showTop: Boolean,
+  showBottom: Boolean
+) = view.invalidateDividers(showTop, showBottom)
 
 internal fun MaterialDialog.preShow() {
   val customViewNoVerticalPadding = config[CUSTOM_VIEW_NO_VERTICAL_PADDING] as? Boolean == true
@@ -113,18 +58,6 @@ internal fun MaterialDialog.preShow() {
     } else if (contentLayout.haveMoreThanOneChild()) {
       contentLayout.modifyScrollViewPadding(bottom = frameMarginVerticalLess)
     }
-  }
-}
-
-internal fun MaterialDialog.postShow() {
-  val negativeBtn = getActionButton(NEGATIVE)
-  if (negativeBtn.isVisible()) {
-    negativeBtn.post { negativeBtn.requestFocus() }
-    return
-  }
-  val positiveBtn = getActionButton(POSITIVE)
-  if (positiveBtn.isVisible()) {
-    positiveBtn.post { positiveBtn.requestFocus() }
   }
 }
 
@@ -176,12 +109,4 @@ internal fun MaterialDialog.hideKeyboard() {
   }.let {
     imm.hideSoftInputFromWindow(it, 0)
   }
-}
-
-internal fun MaterialDialog.colorBackground(@ColorInt color: Int): MaterialDialog {
-  window?.setBackgroundDrawable(GradientDrawable().apply {
-    cornerRadius = dimen(attr = R.attr.md_corner_radius)
-    setColor(color)
-  })
-  return this
 }
