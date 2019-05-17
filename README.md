@@ -29,7 +29,7 @@ core and normal-use functionality.
 ```gradle
 dependencies {
   ...
-  implementation 'com.afollestad.material-dialogs:core:3.0.0-alpha1'
+  implementation 'com.afollestad.material-dialogs:core:3.0.0-alpha2'
 }
 ```
 
@@ -46,7 +46,7 @@ The `input` module contains extensions to the core module, such as a text input 
 ```gradle
 dependencies {
   ...
-  implementation 'com.afollestad.material-dialogs:input:3.0.0-alpha1'
+  implementation 'com.afollestad.material-dialogs:input:3.0.0-alpha2'
 }
 ```
  
@@ -63,7 +63,7 @@ The `files` module contains extensions to the core module, such as a file and fo
 ```gradle
 dependencies {
   ...
-  implementation 'com.afollestad.material-dialogs:files:3.0.0-alpha1'
+  implementation 'com.afollestad.material-dialogs:files:3.0.0-alpha2'
 }
 ```
 
@@ -80,7 +80,7 @@ The `color` module contains extensions to the core module, such as a color choos
 ```gradle
 dependencies {
   ...
-  implementation 'com.afollestad.material-dialogs:color:3.0.0-alpha1'
+  implementation 'com.afollestad.material-dialogs:color:3.0.0-alpha2'
 }
 ```
 
@@ -97,22 +97,7 @@ The `datetime` module contains extensions to make date, time, and date-time pick
 ```gradle
 dependencies {
   ...
-  implementation 'com.afollestad.material-dialogs:datetime:3.0.0-alpha1'
-}
-```
-
-## Lifecycle
-
-[ ![Lifecycle](https://img.shields.io/bintray/v/drummer-aidan/maven/material-dialogs:lifecycle.svg?label=lifecycle) ](https://bintray.com/drummer-aidan/maven/material-dialogs%3Alifecycle/_latestVersion)
-
-#### [Lifecycle Tutorial and Samples](documentation/LIFECYCLE.md)
-
-The `lifecycle` module contains extensions to make dialogs work with AndroidX lifecycles.
-
-```gradle
-dependencies {
-  ...
-  implementation 'com.afollestad.material-dialogs:lifecycle:3.0.0-alpha1'
+  implementation 'com.afollestad.material-dialogs:datetime:3.0.0-alpha2'
 }
 ```
 
@@ -131,6 +116,21 @@ too!
 ```gradle
 dependencies {
   ...
-  implementation 'com.afollestad.material-dialogs:bottomsheets:3.0.0-alpha1'
+  implementation 'com.afollestad.material-dialogs:bottomsheets:3.0.0-alpha2'
+}
+```
+
+## Lifecycle
+
+[ ![Lifecycle](https://img.shields.io/bintray/v/drummer-aidan/maven/material-dialogs:lifecycle.svg?label=lifecycle) ](https://bintray.com/drummer-aidan/maven/material-dialogs%3Alifecycle/_latestVersion)
+
+#### [Lifecycle Tutorial and Samples](documentation/LIFECYCLE.md)
+
+The `lifecycle` module contains extensions to make dialogs work with AndroidX lifecycles.
+
+```gradle
+dependencies {
+  ...
+  implementation 'com.afollestad.material-dialogs:lifecycle:3.0.0-alpha2'
 }
 ```
