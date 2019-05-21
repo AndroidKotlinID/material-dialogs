@@ -29,7 +29,6 @@ import androidx.annotation.DimenRes
 import androidx.annotation.DrawableRes
 import androidx.annotation.Px
 import androidx.annotation.StringRes
-import com.afollestad.materialdialogs.Theme.Companion.inferTheme
 import com.afollestad.materialdialogs.WhichButton.NEGATIVE
 import com.afollestad.materialdialogs.WhichButton.NEUTRAL
 import com.afollestad.materialdialogs.WhichButton.POSITIVE
@@ -38,6 +37,7 @@ import com.afollestad.materialdialogs.callbacks.invokeAll
 import com.afollestad.materialdialogs.internal.list.DialogAdapter
 import com.afollestad.materialdialogs.internal.main.DialogLayout
 import com.afollestad.materialdialogs.list.getListAdapter
+import com.afollestad.materialdialogs.message.DialogMessageSettings
 import com.afollestad.materialdialogs.utils.MDUtil.assertOneSet
 import com.afollestad.materialdialogs.utils.MDUtil.resolveDimen
 import com.afollestad.materialdialogs.utils.font
@@ -54,7 +54,7 @@ typealias DialogCallback = (MaterialDialog) -> Unit
 class MaterialDialog(
   val windowContext: Context,
   val dialogBehavior: DialogBehavior = ModalDialog
-) : Dialog(windowContext, inferTheme(windowContext).styleRes) {
+) : Dialog(windowContext, inferTheme(windowContext, dialogBehavior)) {
 
   /**
    * A named config map, used like tags for extensions.
@@ -100,8 +100,8 @@ class MaterialDialog(
   init {
     val layoutInflater = LayoutInflater.from(windowContext)
     val rootView = dialogBehavior.createView(
-        context = windowContext,
-        window = window!!,
+        creatingContext = windowContext,
+        dialogWindow = window!!,
         layoutInflater = layoutInflater,
         dialog = this
     )
@@ -167,17 +167,15 @@ class MaterialDialog(
   fun message(
     @StringRes res: Int? = null,
     text: CharSequence? = null,
-    html: Boolean = false,
-    lineHeightMultiplier: Float = 1f
+    applySettings: (DialogMessageSettings.() -> Unit)? = null
   ): MaterialDialog {
     assertOneSet("message", text, res)
     this.view.contentLayout.setMessage(
         dialog = this,
         res = res,
         text = text,
-        html = html,
-        lineHeightMultiplier = lineHeightMultiplier,
-        typeface = this.bodyFont
+        typeface = this.bodyFont,
+        applySettings = applySettings
     )
     return this
   }

@@ -1,15 +1,8 @@
-3.0.0-alpha3
+3.0.0-beta2
 
-* The `BottomSheet()` dialog behavior now accepts an optional `LayoutMode` parameter, which you can use 
-to instruct the bottom sheet to be expandable to the screen height or limit itself to wrap the content 
-of its content. See the updated Bottom Sheets documentation.
-* Added a `setPeekHeight(...)` extension method for `MaterialDialog` that you can use to set the 
-default peek height and animate peek height changes.
+* Fixed bottom sheet content going under the system status bar.
 
-### 3.0.0-alpha2
+#### 3.0.0-beta1
 
-* You can now set corner radius dynamically with the `cornerRadius` method.
-* Some minor bug fixes and internal cleanup.
-
-### 3.0.0-alpha1:
-* Bottom sheets are here! Checkout the README and sample project for details.
+* Fixed status bar and navigation appearance for bottom sheet dialogs.
+* We're nearing a "stable" release.

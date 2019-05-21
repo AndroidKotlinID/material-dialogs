@@ -16,8 +16,10 @@
 package com.afollestad.materialdialogs.bottomsheets
 
 import android.annotation.SuppressLint
+import android.app.Activity
 import android.content.Context
 import android.graphics.drawable.GradientDrawable
+import android.os.Build.VERSION.SDK_INT
 import android.view.LayoutInflater
 import android.view.View.GONE
 import android.view.ViewGroup
@@ -50,13 +52,21 @@ class BottomSheet(
   private var dialog: MaterialDialog? = null
 
   internal var defaultPeekHeight: Int by notNull()
-  internal var maxPeekheight: Int = -1
+  internal var maxPeekHeight: Int = -1
   private var actualPeekHeight: Int by notNull()
+
+  override fun getThemeRes(isDark: Boolean): Int {
+    return if (isDark) {
+      R.style.MD_Dark_BottomSheet
+    } else {
+      R.style.MD_Light_BottomSheet
+    }
+  }
 
   @SuppressLint("InflateParams")
   override fun createView(
-    context: Context,
-    window: Window,
+    creatingContext: Context,
+    dialogWindow: Window,
     layoutInflater: LayoutInflater,
     dialog: MaterialDialog
   ): ViewGroup {
@@ -70,14 +80,33 @@ class BottomSheet(
     this.bottomSheetView = rootView!!.findViewById(R.id.md_root_bottom_sheet)
     this.buttonsLayout = rootView!!.findViewById(R.id.md_button_layout)
 
-    val (_, windowHeight) = window.windowManager.getWidthAndHeight()
+    val (_, windowHeight) = dialogWindow.windowManager.getWidthAndHeight()
     defaultPeekHeight = (windowHeight * DEFAULT_PEEK_HEIGHT_RATIO).toInt()
     actualPeekHeight = defaultPeekHeight
-    maxPeekheight = windowHeight
+    maxPeekHeight = windowHeight
 
     setupBottomSheetBehavior()
+    if (creatingContext is Activity) {
+      carryOverWindowFlags(
+          dialogWindow = dialogWindow,
+          creatingActivity = creatingContext
+      )
+    }
 
     return rootView!!
+  }
+
+  private fun carryOverWindowFlags(
+    dialogWindow: Window,
+    creatingActivity: Activity
+  ) {
+    val activityWindow = creatingActivity.window!!
+    if (SDK_INT >= 21) {
+      dialogWindow.statusBarColor = activityWindow.statusBarColor.darkenColor()
+    }
+    if (SDK_INT >= 21) {
+      dialogWindow.navigationBarColor = activityWindow.navigationBarColor
+    }
   }
 
   private fun setupBottomSheetBehavior() {

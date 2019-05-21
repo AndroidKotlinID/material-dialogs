@@ -33,6 +33,7 @@ import com.afollestad.assent.Permission.READ_EXTERNAL_STORAGE
 import com.afollestad.assent.Permission.WRITE_EXTERNAL_STORAGE
 import com.afollestad.assent.runWithPermissions
 import com.afollestad.materialdialogs.DialogBehavior
+import com.afollestad.materialdialogs.LayoutMode.WRAP_CONTENT
 import com.afollestad.materialdialogs.MaterialDialog
 import com.afollestad.materialdialogs.ModalDialog
 import com.afollestad.materialdialogs.bottomsheets.BasicGridItem
@@ -178,11 +179,10 @@ class MainActivity : AppCompatActivity() {
     basic_html_content.setOnClickListener {
       MaterialDialog(this).show {
         title(R.string.app_name)
-        message(
-            R.string.htmlContent,
-            html = true,
-            lineHeightMultiplier = 1.4f
-        )
+        message(R.string.htmlContent) {
+          html { toast("Clicked link: $it") }
+          lineSpacing(1.4f)
+        }
         positiveButton(R.string.agree)
         negativeButton(R.string.disagree)
         debugMode(debugMode)
@@ -702,7 +702,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     bottomsheet_info.setOnClickListener {
-      MaterialDialog(this, BottomSheet()).show {
+      MaterialDialog(this, BottomSheet(WRAP_CONTENT)).show {
         title(R.string.useGoogleLocationServices)
         message(R.string.useGoogleLocationServicesPrompt)
         positiveButton(R.string.agree)
@@ -712,7 +712,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     bottomsheet_list.setOnClickListener {
-      MaterialDialog(this, BottomSheet()).show {
+      MaterialDialog(this, BottomSheet(WRAP_CONTENT)).show {
         listItems(R.array.states) { _, index, text ->
           toast("Selected item $text at index $index")
         }
@@ -734,7 +734,7 @@ class MainActivity : AppCompatActivity() {
           BasicGridItem(R.drawable.ic_icon_android, "Eight")
       )
 
-      MaterialDialog(this, BottomSheet()).show {
+      MaterialDialog(this, BottomSheet(WRAP_CONTENT)).show {
         gridItems(items) { _, index, item ->
           toast("Selected item ${item.title} at index $index")
         }
@@ -745,11 +745,11 @@ class MainActivity : AppCompatActivity() {
     }
 
     bottomsheet_customView.setOnClickListener {
-      showCustomViewDialog(BottomSheet())
+      showCustomViewDialog(BottomSheet(WRAP_CONTENT))
     }
 
     bottomsheet_colorPicker.setOnClickListener {
-      MaterialDialog(this, BottomSheet()).show {
+      MaterialDialog(this, BottomSheet(WRAP_CONTENT)).show {
         title(R.string.custom_colors_argb)
         colorChooser(
             colors = ColorPalette.Primary,
@@ -767,7 +767,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     bottomsheet_dateTimePicker.setOnClickListener {
-      MaterialDialog(this, BottomSheet()).show {
+      MaterialDialog(this, BottomSheet(WRAP_CONTENT)).show {
         title(text = "Select Date and Time")
         dateTimePicker(requireFutureDateTime = true) { _, dateTime ->
           toast("Selected date/time: ${dateTime.formatDateTime()}")

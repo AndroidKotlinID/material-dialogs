@@ -16,7 +16,7 @@ The `color` module contains extensions to the core module, such as a color choos
 ```gradle
 dependencies {
   ...
-  implementation 'com.afollestad.material-dialogs:color:3.0.0-alpha2'
+  implementation 'com.afollestad.material-dialogs:color:3.0.0-beta2'
 }
 ```
 
@@ -26,7 +26,7 @@ dependencies {
 
 Color choosers show a simple grid of colors.
 
-<img src="https://raw.githubusercontent.com/afollestad/material-dialogs/master/art/color_chooser.png" width="200px" />
+<img src="https://raw.githubusercontent.com/afollestad/material-dialogs/master/art/color_chooser.png" width="250px" />
 
 ```kotlin
 val colors = intArrayOf(RED, GREEN, BLUE)
@@ -59,7 +59,7 @@ MaterialDialog(this).show {
 You can specify sub-colors, which are a level down from each top level color. The size of the top 
 level array must match the size of the sub-colors array.
 
-<img src="https://raw.githubusercontent.com/afollestad/material-dialogs/master/art/color_chooser_sub.png" width="200px" />
+<img src="https://raw.githubusercontent.com/afollestad/material-dialogs/master/art/color_chooser_sub.png" width="250px" />
 
 ```kotlin
 val colors = intArrayOf(RED, GREEN, BLUE) // size = 3
@@ -81,7 +81,7 @@ MaterialDialog(this).show {
 
 ### ARGB Selection
 
-<img src="https://raw.githubusercontent.com/afollestad/material-dialogs/master/art/custom_argb.png" width="200px" />
+<img src="https://raw.githubusercontent.com/afollestad/material-dialogs/master/art/custom_argb.png" width="250px" />
 
 ```kotlin
 MaterialDialog(this).show {

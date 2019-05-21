@@ -19,7 +19,7 @@ The `input` module contains extensions to the core module, such as a text input 
 ```gradle
 dependencies {
   ...
-  implementation 'com.afollestad.material-dialogs:input:3.0.0-alpha2'
+  implementation 'com.afollestad.material-dialogs:input:3.0.0-beta2'
 }
 ```
 
@@ -29,7 +29,7 @@ dependencies {
 
 You can setup an input dialog using the `input` extension on `MaterialDialog`:
 
-<img src="https://raw.githubusercontent.com/afollestad/material-dialogs/master/art/input.png" width="200px" />
+<img src="https://raw.githubusercontent.com/afollestad/material-dialogs/master/art/input.png" width="250px" />
 
 ```kotlin
 MaterialDialog(this).show {
@@ -138,7 +138,7 @@ MaterialDialog(this).show {
 You can set a max length which makes a character counter visible, and disables the positive action 
 button if the input length goes over that:
 
-<img src="https://raw.githubusercontent.com/afollestad/material-dialogs/master/art/input_max_length.png" width="200px" />
+<img src="https://raw.githubusercontent.com/afollestad/material-dialogs/master/art/input_max_length.png" width="250px" />
 
 ```kotlin
 MaterialDialog(this).show {
