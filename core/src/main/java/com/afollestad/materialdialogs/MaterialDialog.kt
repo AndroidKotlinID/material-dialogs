@@ -19,7 +19,9 @@ package com.afollestad.materialdialogs
 
 import android.app.Dialog
 import android.content.Context
+import android.graphics.Color.TRANSPARENT
 import android.graphics.Typeface
+import android.graphics.drawable.ColorDrawable
 import android.graphics.drawable.Drawable
 import android.util.TypedValue
 import android.util.TypedValue.COMPLEX_UNIT_DIP
@@ -53,7 +55,7 @@ typealias DialogCallback = (MaterialDialog) -> Unit
 /** @author Aidan Follestad (afollestad) */
 class MaterialDialog(
   val windowContext: Context,
-  val dialogBehavior: DialogBehavior = ModalDialog
+  val dialogBehavior: DialogBehavior = DEFAULT_BEHAVIOR
 ) : Dialog(windowContext, inferTheme(windowContext, dialogBehavior)) {
 
   /**
@@ -425,12 +427,19 @@ class MaterialDialog(
     }
     val cornerRadius =
       cornerRadius ?: resolveDimen(windowContext, attr = R.attr.md_corner_radius)
+    window?.setBackgroundDrawable(ColorDrawable(TRANSPARENT))
     dialogBehavior.setBackgroundColor(
-        context = windowContext,
-        window = window!!,
         view = view,
         color = backgroundColor,
         cornerRounding = cornerRadius
     )
+  }
+
+  companion object {
+    /**
+     * The default [dialogBehavior] for all constructed instances of
+     * [MaterialDialog]. Defaults to [ModalDialog].
+     */
+    @JvmStatic var DEFAULT_BEHAVIOR: DialogBehavior = ModalDialog
   }
 }

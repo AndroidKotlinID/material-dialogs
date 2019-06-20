@@ -104,9 +104,6 @@ class BottomSheet(
   ) {
     val activityWindow = creatingActivity.window!!
     if (SDK_INT >= 21) {
-      dialogWindow.statusBarColor = activityWindow.statusBarColor.darkenColor()
-    }
-    if (SDK_INT >= 21) {
       dialogWindow.navigationBarColor = activityWindow.navigationBarColor
     }
   }
@@ -184,13 +181,10 @@ class BottomSheet(
   }
 
   override fun setBackgroundColor(
-    context: Context,
-    window: Window,
     view: DialogLayout,
     color: Int,
     cornerRounding: Float
   ) {
-    window.setBackgroundDrawable(null)
     bottomSheetView?.background = GradientDrawable().apply {
       cornerRadii = floatArrayOf(
           cornerRounding, cornerRounding, // top left
