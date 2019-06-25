@@ -19,6 +19,7 @@ package com.afollestad.materialdialogs.datetime
 
 import android.R.attr
 import androidx.annotation.CheckResult
+import com.afollestad.date.dayOfMonth
 import com.afollestad.materialdialogs.MaterialDialog
 import com.afollestad.materialdialogs.WhichButton.POSITIVE
 import com.afollestad.materialdialogs.actions.setActionButtonEnabled
@@ -65,19 +66,15 @@ fun MaterialDialog.dateTimePicker(
     setDotTint(resolveColor(windowContext, attr = attr.textColorPrimary))
   }
 
-  minDateTime?.let { getDatePicker().minDate = it.timeInMillis }
-
-  with(getDatePicker()) {
-    init(
-        currentDateTime?.get(Calendar.YEAR) ?: year,
-        currentDateTime?.get(Calendar.MONTH) ?: month,
-        currentDateTime?.get(Calendar.DAY_OF_MONTH) ?: dayOfMonth
-    ) { _, _, _, _ ->
-      val futureTime = isFutureTime(this, getTimePicker())
+  getDatePicker().apply {
+    minDateTime?.let { setMinDate(it) }
+    currentDateTime?.let { setDate(it) }
+    addOnDateChanged { previous, date ->
+      val futureTime = isFutureTime(getDatePicker(), getTimePicker())
       setActionButtonEnabled(
           POSITIVE, !requireFutureDateTime || futureTime
       )
-      if (autoFlipToTime) {
+      if (autoFlipToTime && didDateChange(previous, date)) {
         getPager().currentItem = 1
       }
     }
@@ -85,7 +82,6 @@ fun MaterialDialog.dateTimePicker(
 
   getTimePicker().apply {
     setIs24HourView(show24HoursView)
-
     hour(currentDateTime?.get(Calendar.HOUR_OF_DAY) ?: 12)
     minute(currentDateTime?.get(Calendar.MINUTE) ?: 0)
 
@@ -97,12 +93,6 @@ fun MaterialDialog.dateTimePicker(
       )
     }
   }
-
-  val futureTime = isFutureTime(getDatePicker(), getTimePicker())
-  setActionButtonEnabled(
-      POSITIVE,
-      !requireFutureDateTime || futureTime
-  )
 
   positiveButton(android.R.string.ok) {
     val selectedTime = toCalendar(getDatePicker(), getTimePicker())
@@ -122,6 +112,14 @@ fun MaterialDialog.dateTimePicker(
   }
 
   return this
+}
+
+private fun didDateChange(
+  from: Calendar?,
+  to: Calendar
+): Boolean {
+  if (from == null) return false
+  return from.dayOfMonth != to.dayOfMonth
 }
 
 /**
