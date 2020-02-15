@@ -28,11 +28,11 @@ import android.widget.TextView
 import androidx.annotation.RestrictTo
 import androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP
 import com.afollestad.materialdialogs.R
+import com.afollestad.materialdialogs.utils.MDUtil.additionalPaddingForFont
 import com.afollestad.materialdialogs.utils.MDUtil.dimenPx
 import com.afollestad.materialdialogs.utils.isNotVisible
 import com.afollestad.materialdialogs.utils.isRtl
 import com.afollestad.materialdialogs.utils.isVisible
-import java.lang.Math.max
 
 /**
  * Manages the header frame of the dialog, including the optional icon and title.
@@ -73,8 +73,7 @@ class DialogTitleLayout(
     }
 
     val parentWidth = getSize(widthMeasureSpec)
-    var titleMaxWidth =
-      parentWidth - (frameMarginHorizontal * 2)
+    var titleMaxWidth = parentWidth - (frameMarginHorizontal * 2)
 
     if (iconView.isVisible()) {
       iconView.measure(
@@ -89,17 +88,11 @@ class DialogTitleLayout(
         makeMeasureSpec(0, UNSPECIFIED)
     )
 
-    val iconViewHeight =
-      if (iconView.isVisible()) iconView.measuredHeight else 0
-    val requiredHeight = max(
-        iconViewHeight, titleView.measuredHeight
-    )
+    val iconViewHeight = if (iconView.isVisible()) iconView.measuredHeight else 0
+    val requiredHeight = iconViewHeight.coerceAtLeast(titleView.measuredHeight)
     val actualHeight = requiredHeight + frameMarginVertical + titleMarginBottom
 
-    setMeasuredDimension(
-        parentWidth,
-        actualHeight
-    )
+    setMeasuredDimension(parentWidth, actualHeight)
   }
 
   override fun onLayout(
@@ -118,7 +111,8 @@ class DialogTitleLayout(
 
     val titleHalfHeight = titleView.measuredHeight / 2
     val titleTop = contentMidPoint - titleHalfHeight
-    val titleBottom = contentMidPoint + titleHalfHeight
+    val titleBottom = contentMidPoint + titleHalfHeight +
+        titleView.additionalPaddingForFont()
     var titleLeft: Int
     var titleRight: Int
 

@@ -234,6 +234,16 @@ object MDUtil {
     }
   }
 
+  /**
+   * See [https://github.com/afollestad/material-dialogs/issues/1936]. Calculates additional
+   * spacing required to prevent a given [TextView] from being cut off at the bottom.
+   */
+  @RestrictTo(LIBRARY_GROUP) fun TextView.additionalPaddingForFont(): Int {
+    val fm = paint.fontMetrics
+    val textHeight = fm.descent - fm.ascent
+    return if (textHeight > measuredHeight) (textHeight - measuredHeight).toInt() else 0
+  }
+
   @RestrictTo(LIBRARY_GROUP) inline fun Int?.ifNotZero(block: (value: Int) -> Unit) {
     if (this != null && this != 0) {
       block(this)
